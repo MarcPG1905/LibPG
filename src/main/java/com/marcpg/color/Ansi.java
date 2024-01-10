@@ -1,4 +1,4 @@
-package com.marcpg.color;
+package com.marcpg.libpg.color;
 
 import java.awt.Color;
 

@@ -1,4 +1,4 @@
-package com.marcpg.storing;
+package com.marcpg.libpg.storing;
 
 /**
  * A pair is just two values that have a defined type.
@@ -14,13 +14,24 @@ public class Pair<L, R> {
      * @author MarcPG1905
      * @since 0.0.1
      */
-    public static enum Side {
+    public enum Side {
         /** The right side of a {@link Pair} */ RIGHT,
         /** The left side of a {@link Pair} */ LEFT
     }
 
     private L left;
     private R right;
+
+    /**
+     * Construct a pair with both sides already initialized.
+     * @param left  The value for the left field.
+     * @param right The value for the right field.
+     * @since 0.0.4
+     */
+    public Pair(L left, R right) {
+        this.left = left;
+        this.right = right;
+    }
 
     /**
      * Set or change the left field of the pair
@@ -71,13 +82,13 @@ public class Pair<L, R> {
 
     /**
      * Set or change both fields of the pair
-     * @param l The new object for the left field
-     * @param r The new object for the right field
+     * @param right The new object for the left field
+     * @param left The new object for the right field
      * @since 0.0.1
      */
-    public void set(R r, L l) {
-        left = l;
-        right = r;
+    public void set(L left, R right) {
+        this.left = left;
+        this.right = right;
     }
 
     /**
@@ -125,8 +136,8 @@ public class Pair<L, R> {
     /**
      * This gets the heavier side of the pair based on the length when using {@link Object#toString()}.
      * @return The heavier side of the pair
-     * @see #getHeavierObject() The same but it gets the object directly instead of just the side
      * @since 0.0.1
+     * @see #getHeavierObject()
      */
     public Side getHeavierSide() {
         return left.toString().length() > right.toString().length() ? Side.LEFT : Side.RIGHT;
@@ -135,8 +146,8 @@ public class Pair<L, R> {
     /**
      * This gets the heavier side of the pair based on the length when using {@link Object#toString()}
      * @return The heavier object of the pair
-     * @see #getHeavierSide() The same but it gets the side instead of the object
      * @since 0.0.1
+     * @see #getHeavierSide()
      */
     public Object getHeavierObject() {
         return get(getHeavierSide());
@@ -151,5 +162,18 @@ public class Pair<L, R> {
     @Override
     public String toString() {
         return "{\"left\":" + left.toString() + ",\"right\":" + right.toString() + "}";
+    }
+
+    /**
+     * Static method to create a new Pair instance.
+     * @param left The value for the left field.
+     * @param right The value for the right field.
+     * @param <L> The left value's type.
+     * @param <R> The right value's type.
+     * @return A new Pair instance with the set values.
+     * @since 0.0.4
+     */
+    public static <L, R> Pair<L, R> of(L left, R right) {
+        return new Pair<>(left, right);
     }
 }

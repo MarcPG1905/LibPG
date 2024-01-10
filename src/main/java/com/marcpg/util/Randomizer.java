@@ -1,4 +1,4 @@
-package com.marcpg.util;
+package com.marcpg.libpg.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

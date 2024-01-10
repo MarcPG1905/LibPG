@@ -1,4 +1,4 @@
-package com.marcpg.text;
+package com.marcpg.libpg.text;
 
 /**
  * Used to format text.

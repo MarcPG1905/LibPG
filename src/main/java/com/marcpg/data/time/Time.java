@@ -1,4 +1,4 @@
-package com.marcpg.data.time;
+package com.marcpg.libpg.data.time;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

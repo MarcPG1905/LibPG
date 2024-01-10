@@ -1,4 +1,4 @@
-package com.marcpg.data.time;
+package com.marcpg.libpg.data.time;
 
 /**
  * A template for a custom timer

@@ -1,4 +1,4 @@
-package com.marcpg.data.storage;
+package com.marcpg.libpg.data.storage;
 
 /**
  * ByteData is used to convert and store data. <br>
