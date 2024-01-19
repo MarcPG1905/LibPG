@@ -1,4 +1,4 @@
-package com.marcpg.libpg.text;
+package com.marcpg.text;
 
 import java.util.Arrays;
 import java.util.Collection;

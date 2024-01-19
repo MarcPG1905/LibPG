@@ -1,4 +1,4 @@
-package com.marcpg.libpg.storing;
+package com.marcpg.storing;
 
 /**
  * A pair is just two values that have a defined type.
