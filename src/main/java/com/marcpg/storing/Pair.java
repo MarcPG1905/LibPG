@@ -116,7 +116,7 @@ public class Pair<L, R> {
     /**
      * Check if the pair is empty.
      * This can also be checked by doing a null-check for the right and left side.
-     * @return If the pair is empty
+     * @return If the pair is empty.
      * @since 0.0.1
      */
     public boolean isEmpty() {
@@ -126,7 +126,7 @@ public class Pair<L, R> {
     /**
      * Check if the pair is full.
      * This can also be checked by doing a null-check for the right and left side.
-     * @return If the pair is full
+     * @return If the pair is full.
      * @since 0.0.1
      */
     public boolean isFull() {
@@ -135,7 +135,7 @@ public class Pair<L, R> {
 
     /**
      * This gets the heavier side of the pair based on the length when using {@link Object#toString()}.
-     * @return The heavier side of the pair
+     * @return The heavier side of the pair.
      * @since 0.0.1
      * @see #getHeavierObject()
      */
@@ -144,8 +144,8 @@ public class Pair<L, R> {
     }
 
     /**
-     * This gets the heavier side of the pair based on the length when using {@link Object#toString()}
-     * @return The heavier object of the pair
+     * This gets the heavier side of the pair based on the length when using {@link Object#toString()}.
+     * @return The heavier object of the pair.
      * @since 0.0.1
      * @see #getHeavierSide()
      */
@@ -155,8 +155,8 @@ public class Pair<L, R> {
 
     /**
      * Convert the Pair to a readable {@link String}. <br>
-     * It uses the simple scheme: `{"right":[{@link #right() right field}], "left":[{@link #left() left field}]}`
-     * @return The pair in a {@link String} format
+     * It uses the simple scheme: `{"right":[{@link #right() right field}], "left":[{@link #left() left field}]}`.
+     * @return The pair in a {@link String} format.
      * @since 0.0.1
      */
     @Override

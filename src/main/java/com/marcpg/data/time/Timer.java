@@ -5,32 +5,44 @@ package com.marcpg.data.time;
  * @since 0.0.1
  * @author MarcPG1905
  */
-public interface Timer {
+public abstract class Timer {
+    private final Time timer;
+    private final Time initialTime;
+
+    public Timer(Time time) {
+        this.timer = time;
+        this.initialTime = time;
+    }
+
     /**
      * Starts the timer
      * @since 0.0.1
      */
-    void start();
+    public abstract void start();
 
     /**
      * Stops the timer, cannot be started again after that.
      * @since 0.0.1
      */
-    void stop();
+    public abstract void stop();
 
     /**
      * Get the time that's left before the timer finishes.
      * @return The time that's left
      * @since 0.0.1
      */
-    Time getLeft();
+    public Time getLeft() {
+        return timer;
+    }
 
     /**
      * Get the time that the timer already ran for.
      * @return The time that's done
      * @since 0.0.1
      */
-    Time getDone();
+    public Time getDone() {
+        return new Time(initialTime.get() - timer.get());
+    }
 
     /**
      * Pauses the timer, can be resumed afterward.
@@ -39,9 +51,7 @@ public interface Timer {
      *         false = The timer was already paused, so nothing changed.
      * @since 0.0.1
      */
-    default boolean pause() {
-        return false;
-    }
+    public abstract boolean pause();
 
     /**
      * Resumes the timer after it got paused.
@@ -49,7 +59,5 @@ public interface Timer {
      *         false = The timer wasn't paused, so nothing changed.
      * @since 0.0.1
      */
-    default boolean resume() {
-        return false;
-    }
+    public abstract boolean resume();
 }

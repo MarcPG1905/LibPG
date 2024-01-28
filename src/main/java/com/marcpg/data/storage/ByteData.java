@@ -224,6 +224,8 @@ public class ByteData {
             return eng();
         }
 
+
+        /** The format of data, so ^2 or ^10. */
         public enum Format {
             /** Binary numbers, so ^2 */ BINARY,
             /** Decimal numbers, so ^10 */ DECIMAL,

@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
  * @author MarcPG1905
  */
 public class Completer {
+    private Completer() {
+        throw new AssertionError("Instantiating static-only utility class.");
+    }
+
     /**
      * Filter suggestions based on what was already typed. <br>
      * If suggested has "max", "cat", "thomas" and "mouse" in it, <br>

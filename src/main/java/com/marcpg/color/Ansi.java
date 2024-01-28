@@ -48,7 +48,7 @@ public class Ansi {
     private int codeG, codeB = -1;
 
     /** If it's a color or just a format */
-    public boolean color;
+    private final boolean color;
 
     /** If the color is a custom RGB color or just a basic 4 bit color */
     private final boolean rgbColor;
@@ -60,15 +60,15 @@ public class Ansi {
     }
     private Ansi(int c) {
         code = c;
-        color = false;
         rgbColor = false;
+        color = false;
     }
     private Ansi(int r, int g, int b) {
         code = r;
         codeG = g;
         codeB = b;
-        color = true;
         rgbColor = true;
+        color = true;
     }
 
     private String get(boolean bg) {

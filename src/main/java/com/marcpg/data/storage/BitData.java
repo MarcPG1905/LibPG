@@ -46,6 +46,7 @@ public class BitData {
     /**
      * Get the {@link BitData bit-data} as a formatted {@link String string} that is readable.
      * The formatted {@link BitData bit-data} uses the highest {@link Unit unit} possible and then lower ones for remaining time.
+     * @param format The format to use.
      * @return The {@link BitData bit-data} as a formatted {@link String string}.
      * @see #preciselyFormat(BitData, Unit.Format)
      * @since 0.0.1
@@ -222,6 +223,7 @@ public class BitData {
             return eng();
         }
 
+        /** The format of data, so ^2 or ^10. */
         public enum Format {
             /** Binary numbers, so ^2 */ BINARY,
             /** Decimal numbers, so ^10 */ DECIMAL,

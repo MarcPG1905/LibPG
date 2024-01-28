@@ -6,6 +6,10 @@ package com.marcpg.text;
  * @author MarcPG1905
  */
 public class Formatter {
+    private Formatter() {
+        throw new AssertionError("Instantiating static-only utility class.");
+    }
+
     /**
      * Convert a {@link String string} in "TEST_STRING" format to pascal case: "Test String".
      *

@@ -11,6 +11,10 @@ import java.util.Random;
  * @author MarcPG1905
  */
 public class Randomizer {
+    private Randomizer() {
+        throw new AssertionError("Instantiating static-only utility class.");
+    }
+
     private static Random random = new Random();
 
     /**

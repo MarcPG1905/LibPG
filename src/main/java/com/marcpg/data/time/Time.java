@@ -142,14 +142,13 @@ public class Time {
     }
 
     /**
-     * Make the {@link Time time} allow negative values. <br>
-     * CAUTION: THIS CANNOT BE SET TO FALSE AGAIN AFTER BEING SET TO TRUE!
-     * @since 0.0.1
+     * Changes whether the time allows negative values or not.
+     * @param allowNegatives If the time allows negative values.
+     * @since 0.0.4
      */
-    public void allowNegatives() {
-        allowNegatives = true;
+    public void setAllowNegatives(boolean allowNegatives) {
+        this.allowNegatives = allowNegatives;
     }
-
 
     /**
      * Format the {@link Time time} as a {@link String string} representation using the highest possible {@link Unit unit}.
