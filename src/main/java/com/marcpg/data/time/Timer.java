@@ -9,6 +9,10 @@ public abstract class Timer {
     private final Time timer;
     private final Time initialTime;
 
+    /**
+     * Creates a new Timer object with a specified starting time.
+     * @param time The starting time.
+     */
     public Timer(Time time) {
         this.timer = time;
         this.initialTime = time;
