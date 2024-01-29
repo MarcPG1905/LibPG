@@ -15,9 +15,9 @@ import java.util.List;
  */
 public class Embed {
     /** A completely empty {@link Embed} object. Same as {@link #Embed() new Embed()}. */
-    public static final Embed EMPTY = new Embed(null, null, null, null, null, null, null, null, null, null);
+    public static final Embed EMPTY = new Embed();
 
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.MSS'Z'");
 
     private Author author;
     private String title;
@@ -101,7 +101,7 @@ public class Embed {
             if (titleLink != null)
                 builder.append("\"url\":\"").append(titleLink).append("\",");
 
-            builder.append("\"color\":\"").append(color == null ? "null" : color.getRGB()).append("\",");
+            builder.append("\"color\":").append(color == null ? "null" : Math.abs(color.getRGB())).append(",");
 
             if (fields != null && !fields.isEmpty())
                 builder.append("\"fields\":[").append(String.join(",", fields.stream().map(Field::build).toList())).append("],");
@@ -109,7 +109,7 @@ public class Embed {
             if (author != null && !author.isEmpty())
                 builder.append("\"author\":").append(author.build()).append(",");
 
-            if (footer != null && footer.isEmpty())
+            if (footer != null && !footer.isEmpty())
                 builder.append("\"footer\":").append(footer.build()).append(",");
 
             if (timestamp != null)
@@ -396,13 +396,13 @@ public class Embed {
             StringBuilder builder = new StringBuilder("{");
 
             if (!name.isEmpty())
-                builder.append("\"name\":").append(name).append("\",");
+                builder.append("\"name\":\"").append(name).append("\",");
 
             if (url != null)
-                builder.append("\"url\":").append(url).append("\",");
+                builder.append("\"url\":\"").append(url).append("\",");
 
             if (iconUrl != null)
-                builder.append("\"icon_url\":").append(iconUrl).append("\",");
+                builder.append("\"icon_url\":\"").append(iconUrl).append("\",");
 
             builder.deleteCharAt(builder.lastIndexOf(",")).append("}");
             return builder.toString();
@@ -432,10 +432,10 @@ public class Embed {
             StringBuilder builder = new StringBuilder("{");
 
             if (text != null && !text.isEmpty())
-                builder.append("\"text\":").append(text).append("\",");
+                builder.append("\"text\":\"").append(text).append("\",");
 
             if (iconUrl != null)
-                builder.append("\"icon_url\":").append(iconUrl).append("\",");
+                builder.append("\"icon_url\":\"").append(iconUrl).append("\",");
 
             builder.deleteCharAt(builder.lastIndexOf(",")).append("}");
             return builder.toString();

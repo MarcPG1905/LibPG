@@ -56,7 +56,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(String content) throws IOException {
-        return postRaw(new Message(content).build());
+        return postRaw(new Message(content, false).build());
     }
 
     /**
@@ -66,7 +66,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(Embed... embeds) throws IOException {
-        return postRaw(new Message(null, List.of(embeds)).build());
+        return postRaw(new Message(null, List.of(embeds), false).build());
     }
 
     /**
@@ -76,7 +76,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(List<Embed> embeds) throws IOException {
-        return postRaw(new Message(null, embeds).build());
+        return postRaw(new Message(null, embeds, false).build());
     }
 
     /**
