@@ -6,7 +6,7 @@
 
     <groupId>com.marcpg</groupId>
     <artifactId>libpg</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 
     <properties>
         <java.version>17</java.version>
