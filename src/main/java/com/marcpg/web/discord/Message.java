@@ -1,7 +1,6 @@
-package com.marcpg.discord;
+package com.marcpg.web.discord;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -133,7 +132,7 @@ public class Message {
     public String build() {
         if (isEmpty()) {
             throw new IllegalStateException("Cannot build an empty message!");
-        } else if (content.length() > 2000) {
+        } else if (content != null && content.length() > 2000) {
             throw new IllegalStateException("Cannot build a message with content longer than 2000 characters!");
         } else {
             StringBuilder builder = new StringBuilder("{\"content\":");

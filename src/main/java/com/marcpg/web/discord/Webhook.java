@@ -1,4 +1,4 @@
-package com.marcpg.discord;
+package com.marcpg.web.discord;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -94,6 +94,19 @@ public class Webhook {
      */
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    /**
+     * Formats a {@link String} to be compatible with JSON, by escaping backslashes, normal slashes and
+     * quotation marks. Will run into issues if the input already has these characters escaped.
+     * @param unescaped The string or json string without any escaped characters.
+     * @return A fully escaped and JSON-compatible string.
+     */
+    public static String escapeJson(String unescaped) {
+        return unescaped
+                .replace("\\", "\\\\") // Backslashes (\)
+                .replace("/", "\\/") // Slashes (/)
+                .replace("\"", "\\\""); // Quotation Marks (")
     }
 
     private static HttpURLConnection createConnection(URL url) throws IOException {

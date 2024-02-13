@@ -6,7 +6,10 @@ package com.marcpg.data.time;
  * @author MarcPG1905
  */
 public abstract class Timer {
+    /** The time that's ticking down. */
     protected final Time timer;
+
+    /** The initial time that was set. */
     protected final Time initialTime;
 
     /**

@@ -165,6 +165,7 @@ public class Pair<L, R> {
     /**
      * Gets the side matching the predicate's requirements. <br>
      * If both operations match the requirement, it will return the left side.
+     * @return The side matching the requirements (prioritizing the left size).
      * @param operation What to check for.
      * @since 0.0.5
      */

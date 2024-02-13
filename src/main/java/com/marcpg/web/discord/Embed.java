@@ -1,4 +1,4 @@
-package com.marcpg.discord;
+package com.marcpg.web.discord;
 
 import java.awt.*;
 import java.net.URL;
@@ -85,9 +85,9 @@ public class Embed {
     public String build() {
         if (isEmpty()) {
             throw new IllegalStateException("Cannot build an empty embed!");
-        } else if (description.length() > 4096) {
+        } else if (description != null && description.length() > 4096) {
             throw new IllegalStateException("Cannot build an embed with a description longer than 4096 characters!");
-        } else if (fields.size() > 25) {
+        } else if (fields != null && fields.size() > 25) {
             throw new IllegalStateException("Cannot build an embed with more than 25 fields!");
         } else {
             StringBuilder builder = new StringBuilder("{");
@@ -101,7 +101,7 @@ public class Embed {
             if (titleLink != null)
                 builder.append("\"url\":\"").append(titleLink).append("\",");
 
-            builder.append("\"color\":").append(color == null ? "null" : Math.abs(color.getRGB())).append(",");
+            builder.append("\"color\":").append(color == null ? "null" : colorToDecimal(color)).append(",");
 
             if (fields != null && !fields.isEmpty())
                 builder.append("\"fields\":[").append(String.join(",", fields.stream().map(Field::build).toList())).append("],");
@@ -370,6 +370,15 @@ public class Embed {
     public Embed setFooter(Footer footer) {
         this.footer = footer;
         return this;
+    }
+
+    /**
+     * Converts a {@link Color AWT Color} to a decimal integer, using some simple binary shifting.
+     * @param color The color to convert.
+     * @return The converted decimal integer.
+     */
+    public static int colorToDecimal(Color color) {
+        return (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue();
     }
 
     /**

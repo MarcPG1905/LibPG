@@ -58,11 +58,13 @@ public class Ansi {
         rgbColor = rgb;
         color = true;
     }
+
     private Ansi(int c) {
         code = c;
         rgbColor = false;
         color = false;
     }
+
     private Ansi(int r, int g, int b) {
         code = r;
         codeG = g;
@@ -151,5 +153,65 @@ public class Ansi {
         StringBuilder builder = new StringBuilder();
         for (Ansi format : formats) builder.append(format.get());
         return builder + text + Ansi.RESET;
+    }
+
+    /**
+     * Colors a specified text {@link #RED red}, which can be used for errors for example.
+     * @param text The text to color red.
+     * @return The colored text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static String red(String text) {
+        return formattedString(text, RED);
+    }
+
+    /**
+     * Colors a specified text {@link #YELLOW yellow}, which can be used for warnings for example.
+     * @param text The text to color yellow.
+     * @return The colored text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static String yellow(String text) {
+        return formattedString(text, YELLOW);
+    }
+
+    /**
+     * Colors a specified text {@link #GREEN green}, which can be used for infos or successes for example.
+     * @param text The text to color green.
+     * @return The colored text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static String green(String text) {
+        return formattedString(text, GREEN);
+    }
+
+    /**
+     * Makes the specified text {@link #BLINK blink}.
+     * @param text The text to make blink.
+     * @return The blinking text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static String blink(String text) {
+        return formattedString(text, BLINK);
+    }
+
+    /**
+     * Makes the specified text {@link #BOLD bold/thick}.
+     * @param text The text to make bold/thick.
+     * @return The bold/thick text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static String bold(String text) {
+        return formattedString(text, BOLD);
+    }
+
+    /**
+     * Makes the specified text {@link #ITALIC italic}.
+     * @param text The text to make italic.
+     * @return The italic text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static String italic(String text) {
+        return formattedString(text, ITALIC);
     }
 }

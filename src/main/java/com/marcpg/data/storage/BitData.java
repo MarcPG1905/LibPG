@@ -3,9 +3,9 @@ package com.marcpg.data.storage;
 /**
  * ByteData is used to convert and store data. <br>
  * Sources: <br>
- * - <a href="https://www.ibm.com/docs/en/storage-insights?topic=overview-units-measurement-storage-data">IBM / Units of Measurement for Storage Data</a> <br>
- * - <a href="https://en.wikipedia.org/wiki/Units_of_information">Wikipedia / Units of information</a> <br>
- * - <a href="http://wiki.webperfect.ch/index.php?title=Data_Units">WebPerfect / Data Units</a>
+ * - <a href="https://www.ibm.com/docs/en/storage-insights?topic=overview-units-measurement-storage-data">IBM - Units of Measurement for Storage Data</a> <br>
+ * - <a href="https://en.wikipedia.org/wiki/Units_of_information">Wikipedia - Units of information</a> <br>
+ * - <a href="http://wiki.webperfect.ch/index.php?title=Data_Units">WebPerfect - Data Units</a>
  * @since 0.0.1
  * @author MarcPG1905
  */
@@ -33,7 +33,8 @@ public class BitData {
 
     /**
      * Get the {@link BitData bit-data} as a formatted {@link String string} that is readable.
-     * The formatted {@link BitData bit-data} uses the highest {@link Unit unit} possible for the best readability.
+     * The formatted {@link BitData bit-data} uses the highest {@link Unit unit} possible for
+     * the best readability.
      * @param format The format to use.
      * @return The {@link BitData bit-data} as a formatted {@link String string}.
      * @see #oneUnitFormat(long, Unit.Format)
@@ -45,7 +46,8 @@ public class BitData {
 
     /**
      * Get the {@link BitData bit-data} as a formatted {@link String string} that is readable.
-     * The formatted {@link BitData bit-data} uses the highest {@link Unit unit} possible and then lower ones for remaining time.
+     * The formatted {@link BitData bit-data} uses the highest {@link Unit unit} possible and
+     * then lower ones for remaining time.
      * @param format The format to use.
      * @return The {@link BitData bit-data} as a formatted {@link String string}.
      * @see #preciselyFormat(BitData, Unit.Format)
@@ -66,7 +68,8 @@ public class BitData {
     }
 
     /**
-     * Get the {@link BitData bit-data} in a specific {@link Unit unit} as a {@link Double double} for exact precision.
+     * Get the {@link BitData bit-data} in a specific {@link Unit unit} as a {@link Double double}
+     * for exact precision.
      * @param unit The {@link Unit unit} in which the {@link BitData bit-data} should be converted.
      * @return The converted {@link BitData bit-data}.
      * @since 0.0.1
@@ -78,7 +81,8 @@ public class BitData {
 
 
     /**
-     * Format the {@link BitData bit-data} as a {@link String string} representation using the highest possible {@link Unit unit}.
+     * Format the {@link BitData bit-data} as a {@link String string} representation using
+     * the highest possible {@link Unit unit}.
      * @param b The data in {@link Unit#BIT bits}.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
@@ -97,7 +101,8 @@ public class BitData {
     }
 
     /**
-     * Format the {@link BitData bit-data} as a {@link String string} representation using the highest possible {@link Unit unit}.
+     * Format the {@link BitData bit-data} as a {@link String string} representation using
+     * the highest possible {@link Unit unit}.
      * @param bitData The data.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
@@ -108,7 +113,8 @@ public class BitData {
     }
 
     /**
-     * Format the {@link BitData bit-data} as a {@link String string} representation using the highest possible {@link Unit unit} and then lower ones for remaining data.
+     * Format the {@link BitData bit-data} as a {@link String string} representation using
+     * the highest possible {@link Unit unit} and then lower ones for remaining data.
      * @param b The data in {@link Unit#BIT bit}.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
@@ -141,7 +147,8 @@ public class BitData {
     }
 
     /**
-     * Format the {@link BitData bit-data} as a {@link String string} representation using the highest possible {@link Unit unit} and then lower ones for remaining data.
+     * Format the {@link BitData bit-data} as a {@link String string} representation using
+     * the highest possible {@link Unit unit} and then lower ones for remaining data.
      * @param bitData The data.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
