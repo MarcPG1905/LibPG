@@ -1,10 +1,12 @@
 package com.marcpg.data.database.sql;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -14,30 +16,29 @@ import java.util.function.Consumer;
  * using {@link #changeExceptionHandling(Consumer)}. Can break if the code if the
  * way of handling the exceptions is invalid.
  */
-public class AutoCatchingSQLConnection extends SQLConnection {
+public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
     private Consumer<SQLException> exceptionHandling;
 
     /**
-     * Creates a connection to a database, that automatically catches SQL exceptions. <br>
-     * <b>IMPORTANT: You need to add the database-specific dependency manually!</b>
+     * Creates a connection to a SQL compatible database, that automatically catches SQL exceptions.
      * @param type The database type.
      * @param url The URL to the database (jdbc:type://ip:port/name)
      * @param username Username of the account to access the database with.
      * @param password Password of the account to access the database with.
      * @param table The table in the database that will accessed. Can be changed later on using {@link #changeTable(String)}.
+     * @param primaryKeyName The primary key's name.
      * @param exceptionHandling What should be done with exceptions, in the rare case of them occurring.
      * @throws SQLException if the connection wasn't successful, which is likely due to a wrong URL or wrong credentials.
      * @throws ClassNotFoundException if the dependency of the database type is missing.
      * @see #closeConnection()
      */
-    public AutoCatchingSQLConnection(DatabaseType type, String url, String username, String password, String table, Consumer<SQLException> exceptionHandling) throws SQLException, ClassNotFoundException {
-        super(type, url, username, password, table);
+    public AutoCatchingSQLConnection(DatabaseType type, String url, String username, String password, String table, String primaryKeyName, Consumer<SQLException> exceptionHandling) throws SQLException, ClassNotFoundException {
+        super(type, url, username, password, table, primaryKeyName);
         this.exceptionHandling = exceptionHandling;
     }
 
     /**
-     * Creates a connection to a database, that automatically catches SQL exceptions. <br>
-     * <b>IMPORTANT: You probably need to manually do {@code Class.forName}, for it to properly work!</b>
+     * Creates a connection to a SQL compatible database, that automatically catches SQL exceptions.
      * @param type The database type.
      * @param ip The IP of the database. Can be localhost.
      * @param port The port that the database runs on. If set to 0, will use the database type's {@link DatabaseType#defaultPort default port}.
@@ -45,13 +46,14 @@ public class AutoCatchingSQLConnection extends SQLConnection {
      * @param username Username of the account to access the database with.
      * @param password Password of the account to access the database with.
      * @param table The table in the database that will accessed. Can be changed later on using {@link #changeTable(String)}.
+     * @param primaryKeyName The primary key's name.
      * @param exceptionHandling What should be done with exceptions, in the rare case of them occurring.
      * @throws SQLException if the connection wasn't successful, which is likely due to a wrong URL or wrong credentials.
      * @throws ClassNotFoundException if the dependency of the database type is missing.
      * @see #closeConnection()
      */
-    public AutoCatchingSQLConnection(DatabaseType type, String ip, int port, String databaseName, String username, String password, String table, Consumer<SQLException> exceptionHandling) throws SQLException, ClassNotFoundException {
-        super(type, ip, port, databaseName, username, password, table);
+    public AutoCatchingSQLConnection(DatabaseType type, String ip, int port, String databaseName, String username, String password, String table, String primaryKeyName, Consumer<SQLException> exceptionHandling) throws SQLException, ClassNotFoundException {
+        super(type, ip, port, databaseName, username, password, table, primaryKeyName);
         this.exceptionHandling = exceptionHandling;
     }
 
@@ -82,7 +84,7 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     }
 
     @Override
-    public <T> T executeQuery(String sql, Object... params) {
+    public <T2> T2 executeQuery(String sql, Object @NotNull ... params) {
         try {
             return super.executeQuery(sql, params);
         } catch (SQLException e) {
@@ -92,19 +94,19 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     }
 
     @Override
-    public Object[] getRowArray(UUID uuid) {
+    public Object[] getRowArray(T primaryKey) {
         try {
-            return super.getRowArray(uuid);
+            return super.getRowArray(primaryKey);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
-            return null;
+            return new Object[] {};
         }
     }
 
     @Override
-    public Map<String, Object> getRowMap(UUID uuid) {
+    public Map<String, Object> getRowMap(T primaryKey) {
         try {
-            return super.getRowMap(uuid);
+            return super.getRowMap(primaryKey);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
             return Map.of();
@@ -112,9 +114,9 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     }
 
     @Override
-    public ResultSet getRow(UUID uuid) {
+    public ResultSet getRow(T primaryKey) {
         try {
-            return super.getRow(uuid);
+            return super.getRow(primaryKey);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
             return null;
@@ -122,9 +124,9 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     }
 
     @Override
-    public Object get(UUID uuid, String column) {
+    public Object get(T primaryKey, String column) {
         try {
-            return super.get(uuid, column);
+            return super.get(primaryKey, column);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
             return null;
@@ -132,9 +134,9 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     }
 
     @Override
-    public Object get(UUID uuid, int column) {
+    public Object get(T primaryKey, int column) {
         try {
-            return super.get(uuid, column);
+            return super.get(primaryKey, column);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
             return null;
@@ -142,48 +144,69 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     }
 
     @Override
-    public void set(UUID uuid, String column, Object newValue) {
+    public void set(T primaryKey, String column, Object newValue) {
         try {
-            super.set(uuid, column, newValue);
+            super.set(primaryKey, column, newValue);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
         }
     }
 
     @Override
-    public void set(UUID uuid, int column, Object newValue) {
+    public void set(T primaryKey, int column, Object newValue) {
         try {
-            super.set(uuid, column, newValue);
+            super.set(primaryKey, column, newValue);
+        } catch (SQLException e) {
+            exceptionHandling.accept(e);
+        }
+    }
+
+
+    @Override
+    public void add(@NotNull Map<String, Object> values) {
+        try {
+            super.add(values);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
         }
     }
 
     @Override
-    public void add(UUID uuid, Object... values) {
+    public void remove(T primaryKey) {
         try {
-            super.add(uuid, values);
+            super.remove(primaryKey);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
         }
     }
 
     @Override
-    public void remove(UUID uuid) {
+    public boolean contains(T primaryKey) {
         try {
-            super.remove(uuid);
-        } catch (SQLException e) {
-            exceptionHandling.accept(e);
-        }
-    }
-
-    @Override
-    public boolean contains(UUID uuid) {
-        try {
-            return super.contains(uuid);
+            return super.contains(primaryKey);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
             return false;
+        }
+    }
+
+    @Override
+    public List<Object[]> getAllRowArrays() {
+        try {
+            return super.getAllRowArrays();
+        } catch (SQLException e) {
+            exceptionHandling.accept(e);
+            return List.of();
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllRowMaps() {
+        try {
+            return super.getAllRowMaps();
+        } catch (SQLException e) {
+            exceptionHandling.accept(e);
+            return List.of();
         }
     }
 
@@ -201,6 +224,26 @@ public class AutoCatchingSQLConnection extends SQLConnection {
     public List<Map<String, Object>> getRowMapsContaining(Object object, String... checkedColumns) {
         try {
             return super.getRowMapsContaining(object, checkedColumns);
+        } catch (SQLException e) {
+            exceptionHandling.accept(e);
+            return List.of();
+        }
+    }
+
+    @Override
+    public Collection<Object[]> getRowArraysMatching(String wherePredicate, Object @NotNull ... replacements) {
+        try {
+            return super.getRowArraysMatching(wherePredicate, replacements);
+        } catch (SQLException e) {
+            exceptionHandling.accept(e);
+            return List.of();
+        }
+    }
+
+    @Override
+    public Collection<Map<String, Object>> getRowMapsMatching(String wherePredicate, Object @NotNull ... replacements) {
+        try {
+            return super.getRowMapsMatching(wherePredicate, replacements);
         } catch (SQLException e) {
             exceptionHandling.accept(e);
             return List.of();

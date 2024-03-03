@@ -1,18 +1,21 @@
 package com.marcpg.data.database.sql;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Represents a {@link Connection connection} to a database with built-in features for
- * accessing the database with proper values like the player {@link UUID}, etc. <br>
+ * accessing the database with proper values with primary keys, etc. <br>
  * This database connection is meant to be used with databases that follow the simple
- * scheme of having a UUID as the first column and set to be the primary-key.
+ * scheme of having a the type {@code <T>} as the first column and set to be the primary-key.
+ * @param <T> The primary key's type.
  * @since 0.0.6
  * @author MarcPG1905
  */
-public class SQLConnection {
+public class SQLConnection<T> {
     /**
      * Represents a SQL-Database type, such as MySQL or PostgreSQL. <br>
      * This enumeration is important, to ensure all database types properly handled, connected and loaded.
@@ -84,26 +87,32 @@ public class SQLConnection {
     private String table;
 
     /**
-     * Creates a connection to a database. <br>
-     * <b>IMPORTANT: You need to add the database-specific dependency manually!</b>
+     * The table's primary key name, like "uuid" for example.
+     * It's the first column and it should always be unique per row.
+     */
+    private final String primaryKeyName;
+
+    /**
+     * Creates a connection to a SQL compatible database.
      * @param type The database type.
      * @param url The URL to the database (jdbc:type://ip:port/name)
      * @param username Username of the account to access the database with.
      * @param password Password of the account to access the database with.
      * @param table The table in the database that will accessed. Can be changed later on using {@link #changeTable(String)}.
+     * @param primaryKeyName The primary key's name.
      * @throws SQLException if the connection wasn't successful, which is likely due to a wrong URL or wrong credentials.
      * @throws ClassNotFoundException if the dependency of the database type is missing.
      * @see #closeConnection()
      */
-    public SQLConnection(DatabaseType type, String url, String username, String password, String table) throws SQLException, ClassNotFoundException {
+    public SQLConnection(@NotNull DatabaseType type, String url, String username, String password, String table, String primaryKeyName) throws SQLException, ClassNotFoundException {
         Class.forName(type.driverClass);
         connection = DriverManager.getConnection(url, username, password);
         this.table = table;
+        this.primaryKeyName = primaryKeyName;
     }
 
     /**
-     * Creates a connection to a database. <br>
-     * <b>IMPORTANT: You probably need to manually do {@code Class.forName}, for it to properly work!</b>
+     * Creates a connection to a SQL compatible database.
      * @param type The database type.
      * @param ip The IP of the database. Can be localhost.
      * @param port The port that the database runs on. If set to 0, will use the database type's {@link DatabaseType#defaultPort default port}.
@@ -111,12 +120,13 @@ public class SQLConnection {
      * @param username Username of the account to access the database with.
      * @param password Password of the account to access the database with.
      * @param table The table in the database that will accessed. Can be changed later on using {@link #changeTable(String)}.
+     * @param primaryKeyName The primary key's name.
      * @throws SQLException if the connection wasn't successful, which is likely due to a wrong URL or wrong credentials.
      * @throws ClassNotFoundException if the dependency of the database type is missing.
      * @see #closeConnection()
      */
-    public SQLConnection(DatabaseType type, String ip, int port, String databaseName, String username, String password, String table) throws SQLException, ClassNotFoundException {
-        this(type, "jdbc:" + type.urlPart + "://" + ip + ":" + (port == 0 ? type.defaultPort : port) + "/" + databaseName, username, password, table);
+    public SQLConnection(DatabaseType type, String ip, int port, String databaseName, String username, String password, String table, String primaryKeyName) throws SQLException, ClassNotFoundException {
+        this(type, "jdbc:" + type.urlPart + "://" + ip + ":" + (port == 0 ? type.defaultPort : port) + "/" + databaseName, username, password, table, primaryKeyName);
     }
 
     /**
@@ -165,36 +175,44 @@ public class SQLConnection {
     }
 
     /**
+     * Get the primary key's name.
+     * @return The table's primary key's name.
+     */
+    public String primaryKeyName() {
+        return primaryKeyName;
+    }
+
+    /**
      * Executes a parameterized SQL query and returns the result. When the
      * result has multiple values, it will choose the first column index.
      * @param sql The parameterized query to be executed.
      * @param params The parameters that should be set into the sql query input.
-     * @param <T> The type of the result to be returned.
+     * @param <T2> The type of the result to be returned.
      * @return The result of the query execution, or {@code null} if it's empty.
      * @throws SQLException if there was an error while executing the query.
      */
     @SuppressWarnings("unchecked")
-    public <T> T executeQuery(String sql, Object... params) throws SQLException {
+    public <T2> T2 executeQuery(String sql, Object @NotNull ... params) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 preparedStatement.setObject(i + 1, params[i]);
             }
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next() ? (T) resultSet.getObject(1) : null;
+                return resultSet.next() ? (T2) resultSet.getObject(1) : null;
             }
         }
     }
 
     /**
-     * Get a whole row from the table based on a player {@link UUID}.
-     * @param uuid The {@link UUID} of the player to get the row from.
+     * Get a whole row from the table based on the primary key.
+     * @param primaryKey The primary key to get the row from.
      * @return All {@link Object objects} of the row as an {@link Array array}.
      * @throws SQLException if there was an error while executing the query.
      */
-    public Object[] getRowArray(UUID uuid) throws SQLException {
-        String sql = "SELECT * FROM " + table + " WHERE uuid = ?";
+    public Object[] getRowArray(T primaryKey) throws SQLException {
+        String sql = "SELECT * FROM " + table + " WHERE " + primaryKeyName + " = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, uuid);
+            preparedStatement.setObject(1, primaryKey);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next() ? extractRow(resultSet) : null;
             }
@@ -202,15 +220,15 @@ public class SQLConnection {
     }
 
     /**
-     * Get a whole row with column names and values from the table based on a player {@link UUID}.
-     * @param uuid The {@link UUID} of the player to get the row from.
+     * Get a whole row with column names and values from the table based on the primary key.
+     * @param primaryKey The primary key to get the row from.
      * @return All {@link Object objects} of the row as a {@link Map map}.
      * @throws SQLException if there was an error while executing the query.
      */
-    public Map<String, Object> getRowMap(UUID uuid) throws SQLException {
-        String sql = "SELECT * FROM " + table + " WHERE uuid = ?";
+    public Map<String, Object> getRowMap(T primaryKey) throws SQLException {
+        String sql = "SELECT * FROM " + table + " WHERE " + primaryKeyName + " = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, uuid);
+            preparedStatement.setObject(1, primaryKey);
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next() ? extractRowAsMap(resultSet) : null;
             }
@@ -218,118 +236,155 @@ public class SQLConnection {
     }
 
     /**
-     * Get the {@link ResultSet result} of getting a row based on a player {@link UUID}.
-     * @param uuid The {@link UUID} of the player to get the row from.
+     * Get the {@link ResultSet result} of getting a row based on the primary key.
+     * @param primaryKey The primary key to get the row from.
      * @return The {@link ResultSet result} of the query.
      * @throws SQLException if there was an error while executing the query.
      */
-    public ResultSet getRow(UUID uuid) throws SQLException {
-        String sql = "SELECT * FROM " + table + " WHERE uuid = ?";
+    public ResultSet getRow(T primaryKey) throws SQLException {
+        String sql = "SELECT * FROM " + table + " WHERE " + primaryKeyName + " = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, uuid);
+            preparedStatement.setObject(1, primaryKey);
             return preparedStatement.executeQuery();
         }
     }
 
     /**
-     * Get a value from a specific player's data, based on a player {@link UUID} and the column name.
-     * @param uuid The {@link UUID} of the player to get the value from.
+     * Get a specified column, based on the primary key and the column name.
+     * @param primaryKey The primary key to get the value from.
      * @param column The column/value's name.
      * @return The {@link Object value} in the specified field.
      * @throws SQLException if there was an error while executing the query.
      */
-    public Object get(UUID uuid, String column) throws SQLException {
-        String sql = "SELECT " + column + " FROM " + table + " WHERE uuid = ?";
-        return executeQuery(sql, uuid);
+    public Object get(T primaryKey, String column) throws SQLException {
+        String sql = "SELECT " + column + " FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        return executeQuery(sql, primaryKey);
     }
 
     /**
-     * Get a value from a specific player's data, based on a player {@link UUID} and the column index.
-     * @param uuid The {@link UUID} of the player to get the value from.
+     * Get a specified column, based on the primary key and the column index.
+     * @param primaryKey The primary key to get the value from.
      * @param column The column/value's index (starting at 1).
      * @return The {@link Object value} in the specified field.
      * @throws SQLException if there was an error while executing the query.
      */
-    public Object get(UUID uuid, int column) throws SQLException {
-        String sql = "SELECT " + (column + 1) + " FROM " + table + " WHERE uuid = ?";
-        return executeQuery(sql, uuid);
+    public Object get(T primaryKey, int column) throws SQLException {
+        String sql = "SELECT " + (column + 1) + " FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        return executeQuery(sql, primaryKey);
     }
 
     /**
-     * Set a value from a specific player's data to a new value,
-     * based on a player {@link UUID} and the column name.
-     * @param uuid The {@link UUID} of the player to get the value from.
+     * Set a value of a specified row to a new value, based on the primary key and the column name.
+     * @param primaryKey The primary key to get the value from.
      * @param column The column/value's name.
      * @param newValue The new value for the specified field.
      * @throws SQLException if there was an error while executing the query.
      */
-    public void set(UUID uuid, String column, Object newValue) throws SQLException {
-        String sql = "UPDATE " + table + " SET " + column + " = ? WHERE uuid = ?";
+    public void set(T primaryKey, String column, Object newValue) throws SQLException {
+        String sql = "UPDATE " + table + " SET " + column + " = ? WHERE " + primaryKeyName + " = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, newValue);
-            preparedStatement.setObject(2, uuid);
+            preparedStatement.setObject(2, primaryKey);
             preparedStatement.executeUpdate();
         }
     }
 
     /**
-     * Set a value from a specific player's data to a new value,
-     * based on a player {@link UUID} and the column index.
-     * @param uuid The {@link UUID} of the player to get the value from.
+     * Set a value of a specified row to a new value, based on the primary key and the column index.
+     * @param primaryKey The primary key to get the value from.
      * @param column The column/value's index (starting at 1).
      * @param newValue The new value for the specified field.
      * @throws SQLException if there was an error while executing the query.
      */
-    public void set(UUID uuid, int column, Object newValue) throws SQLException {
-        String sql = "UPDATE " + table + " SET " + column + " = ? WHERE uuid = ?";
+    public void set(T primaryKey, int column, Object newValue) throws SQLException {
+        String sql = "UPDATE " + table + " SET " + column + " = ? WHERE " + primaryKeyName + " = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, newValue);
-            preparedStatement.setObject(2, uuid);
+            preparedStatement.setObject(2, primaryKey);
             preparedStatement.executeUpdate();
         }
     }
 
     /**
-     * Inserts a new row with a player and the values into the table.
-     * @param uuid The player's {@link UUID}, which is the first column.
-     * @param values All other values for the new row. Has to be valid according to database settings,
-     *               otherwise will throw the following {@link SQLException Exception}.
+     * Inserts a new row with the specified values into the table.
+     * @param values All values for the new row. The keys are the column names and the values are the values.
+     *               Has to be valid according to database settings, otherwise throws an {@link SQLException Exception}.
      * @throws SQLException if there was an error while executing the query. Can be caused by invalid values.
      */
-    public void add(UUID uuid, Object... values) throws SQLException {
-        String sql = "INSERT INTO " + table + " VALUES (?, " + String.join(", ", Collections.nCopies(values.length, "?")) + ")";
+    public void add(@NotNull Map<String, Object> values) throws SQLException {
+        StringBuilder placeholders = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+        for (String column : values.keySet()) {
+            placeholders.append("?,");
+            params.add(values.get(column));
+        }
+        placeholders.deleteCharAt(placeholders.length() - 1); // Remove trailing comma
+
+        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)",
+                table, String.join(",", values.keySet()), placeholders);
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, uuid);
-            for (int i = 0; i < values.length; i++) {
-                preparedStatement.setObject(i + 2, values[i]);
+            for (int i = 0; i < params.size(); i++) {
+                preparedStatement.setObject(i + 1, params.get(i));
             }
             preparedStatement.executeUpdate();
         }
     }
 
     /**
-     * Removed a player's row based on his {@link UUID}.
-     * @param uuid The player's {@link UUID}.
+     * Removed a row based on the primary key.
+     * @param primaryKey The primary key to remove.
      * @throws SQLException if there was an error while executing the query.
-     *                      Can be caused by removing a non-existent player.
+     *                      Can be caused by removing a non-existent row.
      */
-    public void remove(UUID uuid) throws SQLException {
-        String sql = "DELETE FROM " + table + " WHERE uuid = ?";
+    public void remove(T primaryKey) throws SQLException {
+        String sql = "DELETE FROM " + table + " WHERE " + primaryKeyName + " = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, uuid);
+            preparedStatement.setObject(1, primaryKey);
             preparedStatement.executeUpdate();
         }
     }
 
     /**
-     * Checks whether the table contains an entry/row for the player or not.
-     * @param uuid The player's {@link UUID}.
-     * @return true if the table contains the player's {@link UUID}, false otherwise.
+     * Checks whether the table contains an entry/row with the primary key or not.
+     * @param primaryKey The primary key to check for.
+     * @return true if the table contains the primary key, false otherwise.
      * @throws SQLException if there was an error while executing the query.
      */
-    public boolean contains(UUID uuid) throws SQLException {
-        String sql = "SELECT 1 FROM " + table + " WHERE uuid = ?";
-        return executeQuery(sql, uuid) != null;
+    public boolean contains(T primaryKey) throws SQLException {
+        String sql = "SELECT 1 FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        return executeQuery(sql, primaryKey) != null;
+    }
+
+    /**
+     * Get all rows of the table, where the {@link ArrayList list} represents
+     * the rows and the arrays are each row's columns.
+     * @return A {@link ArrayList list} containing all columns as an array.
+     * @throws SQLException if there was an error while executing the query.
+     */
+    public List<Object[]> getAllRowArrays() throws SQLException {
+        String sql = "SELECT * FROM " + table;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return extractRows(resultSet);
+            }
+        }
+    }
+
+    /**
+     * Get all rows of the table, where the {@link ArrayList list} represents the
+     * rows and the {@link HashMap maps} are each row's columns with their name
+     * first and then their value.
+     * @return A {@link HashMap map} containing all columns with their names and values.
+     * @throws SQLException if there was an error while executing the query.
+     */
+    public List<Map<String, Object>> getAllRowMaps() throws SQLException {
+        String sql = "SELECT * FROM " + table;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return extractRowsAsMaps(resultSet);
+            }
+        }
     }
 
     /**
@@ -347,7 +402,9 @@ public class SQLConnection {
                 .collect(Collectors.joining(" OR "));
         String sql = "SELECT * FROM " + table + " WHERE " + condition;
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, object);
+            for (int i = 1; i <= checkedColumns.length; i++)
+                preparedStatement.setObject(i, object);
+
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return extractRows(resultSet);
             }
@@ -356,7 +413,7 @@ public class SQLConnection {
 
     /**
      * Get all rows of the table containing a specific value in <b>any</b>
-     * specified column as a List of arrays, where the {@link ArrayList list}
+     * specified column as a List of maps, where the {@link ArrayList list}
      * represents the rows and the {@link HashMap maps} are each row's columns
      * with their name first and then their value.
      * @param object What object must be contained in at least one of the rows.
@@ -370,14 +427,60 @@ public class SQLConnection {
                 .collect(Collectors.joining(" OR "));
         String sql = "SELECT * FROM " + table + " WHERE " + condition;
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, object);
+            for (int i = 1; i <= checkedColumns.length; i++)
+                preparedStatement.setObject(i, object);
+
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return extractRowsAsMaps(resultSet);
             }
         }
     }
 
-    private Object [] extractRow(ResultSet resultSet) throws SQLException {
+    /**
+     * Get all rows matching a specified WHERE predicate as a Collection of arrays,
+     * where the {@link ArrayList list} represents the rows and the arrays are each
+     * row's columns with their name first and then their value.
+     * @param wherePredicate The SQL {@code WHERE} predicate, like {@code column = ? AND another_column = ?}.
+     *                       This is inserted right after the {@code WHERE}.
+     * @param replacements What <b>objects</b> the question marks should be replaced with.
+     * @return All rows that match the WHERE predicate as arrays.
+     * @throws SQLException if there was an error while executing the query or the WHERE predicate was invalid.
+     */
+    public Collection<Object[]> getRowArraysMatching(String wherePredicate, Object @NotNull ... replacements) throws SQLException {
+        String sql = "SELECT * FROM " + table + " WHERE " + wherePredicate;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < replacements.length; i++)
+                preparedStatement.setObject(i + 1, replacements[i]);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return extractRows(resultSet);
+            }
+        }
+    }
+
+    /**
+     * Get all rows matching a specified WHERE predicate as a Collection of arrays,
+     * where the {@link Collection collection} represents the rows and the arrays
+     * are each row's columns with their name first and then their value.
+     * @param wherePredicate The SQL {@code WHERE} predicate, like {@code column = ? AND another_column = ?}.
+     *                       This is inserted right after the {@code WHERE}.
+     * @param replacements What <b>objects</b> the question marks should be replaced with.
+     * @return All rows that match the WHERE predicate as arrays.
+     * @throws SQLException if there was an error while executing the query or the WHERE predicate was invalid.
+     */
+    public Collection<Map<String, Object>> getRowMapsMatching(String wherePredicate, Object @NotNull ... replacements) throws SQLException {
+        String sql = "SELECT * FROM " + table + " WHERE " + wherePredicate;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < replacements.length; i++)
+                preparedStatement.setObject(i + 1, replacements[i]);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return extractRowsAsMaps(resultSet);
+            }
+        }
+    }
+
+    private Object @NotNull [] extractRow(@NotNull ResultSet resultSet) throws SQLException {
         int columns = resultSet.getMetaData().getColumnCount();
         Object[] objects = new Object[columns];
         for (int i = 1; i <= columns; i++) {
@@ -387,7 +490,7 @@ public class SQLConnection {
         return objects;
     }
 
-    private Map<String, Object> extractRowAsMap(ResultSet resultSet) throws SQLException {
+    private @NotNull Map<String, Object> extractRowAsMap(@NotNull ResultSet resultSet) throws SQLException {
         Map<String, Object> map = new HashMap<>();
         for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
             map.put(resultSet.getMetaData().getColumnName(i), resultSet.getObject(i));
@@ -395,7 +498,7 @@ public class SQLConnection {
         return map;
     }
 
-    private List<Object[]> extractRows(ResultSet resultSet) throws SQLException {
+    private @NotNull List<Object[]> extractRows(@NotNull ResultSet resultSet) throws SQLException {
         int columnCount = resultSet.getMetaData().getColumnCount();
         List<Object[]> rows = new ArrayList<>();
         while (resultSet.next()) {
@@ -408,7 +511,7 @@ public class SQLConnection {
         return rows;
     }
 
-    private List<Map<String, Object>> extractRowsAsMaps(ResultSet resultSet) throws SQLException {
+    private @NotNull List<Map<String, Object>> extractRowsAsMaps(@NotNull ResultSet resultSet) throws SQLException {
         int columnCount = resultSet.getMetaData().getColumnCount();
         List<Map<String, Object>> rows = new ArrayList<>();
         while (resultSet.next()) {
