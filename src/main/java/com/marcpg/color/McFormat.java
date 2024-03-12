@@ -1,5 +1,7 @@
 package com.marcpg.color;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 
 /**
@@ -8,6 +10,7 @@ import java.awt.*;
  * @since 0.0.1
  * @author MarcPG1905
  */
+@SuppressWarnings("SpellCheckingInspection")
 public enum McFormat {
     /** Reset the color to the default one */ RESET('r', null, true, true, 0),
     /** Makes the text constantly change */ MAGIC('r', null, true, true, 8),
@@ -72,8 +75,8 @@ public enum McFormat {
      * @return § + the code, so you can use it in text.
      * @since 0.0.1
      */
-    public String chatColor() {
-        return "§" + code;
+    public @NotNull String chatColor() {
+        return "§" + this.code;
     }
 
     /**
@@ -81,8 +84,8 @@ public enum McFormat {
      * @return Equivalent {@link Color Java AWT color}
      * @since 0.0.1
      */
-    public Color awtColor() {
-        return Color.decode("#" + hex);
+    public @NotNull Color awtColor() {
+        return Color.decode("#" + this.hex);
     }
 
     /**
@@ -90,8 +93,8 @@ public enum McFormat {
      * @return Equivalent ANSI escape code
      * @since 0.0.1
      */
-    public String ansi() {
-        return "\\e[0;" + ansiCode + "m";
+    public @NotNull String ansi() {
+        return "\\e[0;" + this.ansiCode + "m";
     }
 
     /**
@@ -99,8 +102,8 @@ public enum McFormat {
      * @return Equivalent console ANSI escape code
      * @since 0.0.1
      */
-    public String consoleAnsi() {
-        return "\u001B[" + ansiCode + "m";
+    public @NotNull String consoleAnsi() {
+        return "\u001B[" + this.ansiCode + "m";
     }
 
     /**
@@ -108,7 +111,8 @@ public enum McFormat {
      * @return § + the code, so you can use it in text
      * @since 0.0.1
      */
-    public String toString() {
-        return chatColor();
+    @Override
+    public @NotNull String toString() {
+        return this.chatColor();
     }
 }

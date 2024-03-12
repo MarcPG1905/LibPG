@@ -1,5 +1,7 @@
 package com.marcpg.web.discord;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -8,9 +10,9 @@ import java.util.List;
 
 /**
  * Can be used to interact with Discord webhooks and send messages and embeds to them.
- * @since 0.0.4
  * @see Message
  * @see Embed
+ * @since 0.0.4
  * @author MarcPG1905
  */
 public class Webhook {
@@ -21,7 +23,7 @@ public class Webhook {
      * @param webhookUrl The Discord webhook URL to post all messages to.
      */
     public Webhook(URL webhookUrl) {
-        url = webhookUrl;
+        this.url = webhookUrl;
     }
 
     /**
@@ -31,7 +33,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int postRaw(String messageJson) throws IOException {
-        HttpURLConnection connection = createConnection(url);
+        HttpURLConnection connection = createConnection(this.url);
         try (DataOutputStream out = new DataOutputStream(connection.getOutputStream())) {
             out.writeBytes(messageJson);
             out.flush();
@@ -45,8 +47,8 @@ public class Webhook {
      * @return The http response code.
      * @throws IOException if there was an error while posting the message.
      */
-    public int post(Message message) throws IOException {
-        return postRaw(message.build());
+    public int post(@NotNull Message message) throws IOException {
+        return this.postRaw(message.build());
     }
 
     /**
@@ -56,7 +58,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(String content) throws IOException {
-        return postRaw(new Message(content, false).build());
+        return this.postRaw(new Message(content, false).build());
     }
 
     /**
@@ -66,7 +68,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(Embed... embeds) throws IOException {
-        return postRaw(new Message(null, List.of(embeds), false).build());
+        return this.postRaw(new Message(null, List.of(embeds), false).build());
     }
 
     /**
@@ -76,7 +78,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(List<Embed> embeds) throws IOException {
-        return postRaw(new Message(null, embeds, false).build());
+        return this.postRaw(new Message(null, embeds, false).build());
     }
 
     /**
@@ -84,7 +86,7 @@ public class Webhook {
      * @return The Discord webhook URL that's posted to.
      */
     public URL getUrl() {
-        return url;
+        return this.url;
     }
 
     /**
@@ -102,14 +104,14 @@ public class Webhook {
      * @param unescaped The string or json string without any escaped characters.
      * @return A fully escaped and JSON-compatible string.
      */
-    public static String escapeJson(String unescaped) {
+    public static @NotNull String escapeJson(@NotNull String unescaped) {
         return unescaped
                 .replace("\\", "\\\\") // Backslashes (\)
                 .replace("/", "\\/") // Slashes (/)
                 .replace("\"", "\\\""); // Quotation Marks (")
     }
 
-    private static HttpURLConnection createConnection(URL url) throws IOException {
+    private static @NotNull HttpURLConnection createConnection(@NotNull URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");

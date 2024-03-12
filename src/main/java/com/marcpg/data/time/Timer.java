@@ -1,7 +1,7 @@
 package com.marcpg.data.time;
 
 /**
- * A template for a custom timer
+ * A template for a custom timer.
  * @since 0.0.1
  * @author MarcPG1905
  */
@@ -37,7 +37,7 @@ public abstract class Timer {
      * @return The time that's left.
      */
     public Time getLeft() {
-        return timer;
+        return this.timer;
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class Timer {
      * @return The time that's done.
      */
     public Time getDone() {
-        return new Time(initialTime.get() - timer.get());
+        return new Time(this.initialTime.get() - this.timer.get());
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.marcpg.web;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,7 +72,7 @@ public class Downloads {
      * @param destination Where the downloaded file should be stored.
      * @throws IOException if there is an error while downloading the file, such as a connection reset.
      */
-    public static void simpleDownload(URL url, File destination) throws IOException {
+    public static void simpleDownload(@NotNull URL url, File destination) throws IOException {
         ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
         try (FileOutputStream out = new FileOutputStream(destination)) {
             out.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);

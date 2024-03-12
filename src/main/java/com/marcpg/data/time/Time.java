@@ -1,5 +1,7 @@
 package com.marcpg.data.time;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,8 +29,8 @@ public class Time {
      * @param unit The {@link Unit unit} of the {@link Time time} value.
      * @since 0.0.1
      */
-    public Time(long time, Unit unit) {
-        seconds = time * unit.sec;
+    public Time(long time, @NotNull Unit unit) {
+        this.seconds = time * unit.sec;
     }
 
     /**
@@ -60,7 +62,7 @@ public class Time {
      * @since 0.0.2
      */
     public long get() {
-        return seconds;
+        return this.seconds;
     }
 
     /**
@@ -69,8 +71,8 @@ public class Time {
      * @return The converted {@link Time time}.
      * @since 0.0.1
      */
-    public long getAs(Unit unit) {
-        return seconds / unit.sec;
+    public long getAs(@NotNull Unit unit) {
+        return this.seconds / unit.sec;
     }
 
     /**
@@ -79,8 +81,8 @@ public class Time {
      * @return The converted {@link Time time}.
      * @since 0.0.1
      */
-    public double getAsExact(Unit unit) {
-        return (double) seconds / unit.sec;
+    public double getAsExact(@NotNull Unit unit) {
+        return (double) this.seconds / unit.sec;
     }
 
     /**
@@ -89,8 +91,8 @@ public class Time {
      * @param unit The {@link Unit unit} of the {@link Time time}.
      * @since 0.0.1
      */
-    public void increment(long time, Unit unit) {
-        seconds += time * unit.sec;
+    public void increment(long time, @NotNull Unit unit) {
+        this.seconds += time * unit.sec;
     }
 
     /**
@@ -108,7 +110,7 @@ public class Time {
      * @since 0.0.1
      */
     public void increment() {
-        seconds++;
+        this.seconds++;
     }
 
     /**
@@ -117,8 +119,8 @@ public class Time {
      * @param unit The {@link Unit unit} of the {@link Time time}.
      * @since 0.0.1
      */
-    public void decrement(long time, Unit unit) {
-        decrement(time * unit.sec);
+    public void decrement(long time, @NotNull Unit unit) {
+        this.decrement(time * unit.sec);
     }
 
     /**
@@ -128,7 +130,7 @@ public class Time {
      */
     public void decrement(long seconds) {
         this.seconds -= seconds;
-        if (!allowNegatives && this.seconds < 0) this.seconds = 0;
+        if (!this.allowNegatives && this.seconds < 0) this.seconds = 0;
     }
 
     /**
@@ -138,7 +140,7 @@ public class Time {
      */
     public void decrement() {
         this.seconds--;
-        if (!allowNegatives && this.seconds < 0) this.seconds = 0;
+        if (!this.allowNegatives && this.seconds < 0) this.seconds = 0;
     }
 
     /**
@@ -156,7 +158,7 @@ public class Time {
      * @return The formatted {@link Time time} {@link String string}.
      * @since 0.0.1
      */
-    public static String oneUnitFormat(long s) {
+    public static @NotNull String oneUnitFormat(long s) {
         Unit[] units = Unit.values();
 
         for (int i = units.length; i >= 1; i--) {
@@ -173,7 +175,7 @@ public class Time {
      * @return The formatted {@link Time time} {@link String string}.
      * @since 0.0.1
      */
-    public static String oneUnitFormat(Time time) {
+    public static @NotNull String oneUnitFormat(@NotNull Time time) {
         return oneUnitFormat(time.seconds);
     }
 
@@ -183,7 +185,7 @@ public class Time {
      * @return The formatted {@link Time time} {@link String string}.
      * @since 0.0.1
      */
-    public static String preciselyFormat(long s) {
+    public static @NotNull String preciselyFormat(long s) {
         Unit[] units = Unit.values();
         StringBuilder result = new StringBuilder();
 
@@ -215,7 +217,7 @@ public class Time {
      * @return The formatted {@link Time time} {@link String string}.
      * @since 0.0.1
      */
-    public static String preciselyFormat(Time time) {
+    public static @NotNull String preciselyFormat(@NotNull Time time) {
         return preciselyFormat(time.seconds);
     }
 
@@ -226,7 +228,7 @@ public class Time {
      * @return The parsed {@link Time time}.
      * @since 0.0.3
      */
-    public static Time parse(String input) {
+    public static @NotNull Time parse(String input) {
         Matcher matcher = Pattern.compile("(\\d+)|([a-zA-Z]+)").matcher(input);
 
         String text = null;
@@ -281,8 +283,8 @@ public class Time {
         public final String abb;
 
         Unit(long seconds, String abbreviation) {
-            sec = seconds;
-            abb = abbreviation;
+            this.sec = seconds;
+            this.abb = abbreviation;
         }
 
         /**
@@ -291,8 +293,8 @@ public class Time {
          * @return The english name.
          * @since 0.0.1
          */
-        public String eng() {
-            return pluralEng().substring(0, this.name().length() - 1).replace("ies", "y");
+        public @NotNull String eng() {
+            return this.pluralEng().substring(0, this.name().length() - 1).replace("ies", "y");
         }
 
         /**
@@ -301,7 +303,7 @@ public class Time {
          * @return Plural form of {@link #eng}
          * @since 0.0.1
          */
-        public String pluralEng() {
+        public @NotNull String pluralEng() {
             return this.name().toLowerCase();
         }
 
@@ -309,8 +311,9 @@ public class Time {
          * Just the same as {@link #eng()}.
          * @since 0.0.1
          */
-        public String toString() {
-            return eng();
+        @Override
+        public @NotNull String toString() {
+            return this.eng();
         }
     }
 }

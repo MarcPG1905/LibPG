@@ -1,5 +1,7 @@
 package com.marcpg.data.storage;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * ByteData is used to convert and store data. <br>
  * Sources: <br>
@@ -27,8 +29,8 @@ public class BitData {
      * @param unit The {@link Unit unit} of the {@link BitData time} value.
      * @since 0.0.1
      */
-    public BitData(long data, Unit unit) {
-        bits = data * unit.bits;
+    public BitData(long data, @NotNull Unit unit) {
+        this.bits = data * unit.bits;
     }
 
     /**
@@ -63,8 +65,8 @@ public class BitData {
      * @return The converted {@link BitData bit-data}.
      * @since 0.0.1
      */
-    public long getAs(Unit unit) {
-        return bits / unit.bits;
+    public long getAs(@NotNull Unit unit) {
+        return this.bits / unit.bits;
     }
 
     /**
@@ -74,8 +76,8 @@ public class BitData {
      * @return The converted {@link BitData bit-data}.
      * @since 0.0.1
      */
-    public double getAsExact(Unit unit) {
-        return (double) bits / unit.bits;
+    public double getAsExact(@NotNull Unit unit) {
+        return (double) this.bits / unit.bits;
     }
 
 
@@ -88,7 +90,7 @@ public class BitData {
      * @return The formatted {@link BitData bit-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String oneUnitFormat(long b, Unit.Format format) {
+    public static @NotNull String oneUnitFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
 
         for (int i = units.length; i >= 1; i--) {
@@ -108,7 +110,7 @@ public class BitData {
      * @return The formatted {@link BitData bit-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String oneUnitFormat(BitData bitData, Unit.Format format) {
+    public static @NotNull String oneUnitFormat(@NotNull BitData bitData, Unit.Format format) {
         return oneUnitFormat(bitData.bits, format);
     }
 
@@ -120,7 +122,7 @@ public class BitData {
      * @return The formatted {@link BitData bit-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String preciselyFormat(long b, Unit.Format format) {
+    public static @NotNull String preciselyFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
         StringBuilder result = new StringBuilder();
 
@@ -154,7 +156,7 @@ public class BitData {
      * @return The formatted {@link BitData bit-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String preciselyFormat(BitData bitData, Unit.Format format) {
+    public static @NotNull String preciselyFormat(@NotNull BitData bitData, Unit.Format format) {
         return preciselyFormat(bitData.bits, format);
     }
 
@@ -198,7 +200,7 @@ public class BitData {
         public final Format format;
 
         Unit(long bits, String abbreviation, Format format) {
-            abb = abbreviation;
+            this.abb = abbreviation;
             this.bits = bits;
             this.format = format;
         }
@@ -209,7 +211,7 @@ public class BitData {
          * @return The english name.
          * @since 0.0.1
          */
-        public String eng() {
+        public @NotNull String eng() {
             return this.name().toLowerCase();
         }
 
@@ -218,7 +220,7 @@ public class BitData {
          * @return The english name.
          * @since 0.0.1
          */
-        public String pluralEng() {
+        public @NotNull String pluralEng() {
             return this.name().toLowerCase();
         }
 
@@ -226,8 +228,9 @@ public class BitData {
          * Just the same as {@link #eng()} and {@link #pluralEng()}.
          * @since 0.0.1
          */
-        public String toString() {
-            return eng();
+        @Override
+        public @NotNull String toString() {
+            return this.eng();
         }
 
         /** The format of data, so ^2 or ^10. */

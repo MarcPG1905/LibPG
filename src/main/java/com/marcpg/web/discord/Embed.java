@@ -1,5 +1,7 @@
 package com.marcpg.web.discord;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.net.URL;
 import java.time.OffsetDateTime;
@@ -8,15 +10,16 @@ import java.util.List;
 
 /**
  * Represents a Discord embed that can be converted into a raw JSON.
- * @since 0.0.4
  * @see Webhook
  * @see Message
+ * @since 0.0.4
  * @author MarcPG1905
  */
 public class Embed {
     /** A completely empty {@link Embed} object. Same as {@link #Embed() new Embed()}. */
     public static final Embed EMPTY = new Embed();
 
+    /** The {@link DateTimeFormatter} that's used for converting dates to embed timestamp dates. */
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.MSS'Z'");
 
     private Author author;
@@ -83,40 +86,40 @@ public class Embed {
      * @return The formatted JSON representation.
      */
     public String build() {
-        if (isEmpty()) {
+        if (this.isEmpty()) {
             throw new IllegalStateException("Cannot build an empty embed!");
-        } else if (description != null && description.length() > 4096) {
+        } else if (this.description != null && this.description.length() > 4096) {
             throw new IllegalStateException("Cannot build an embed with a description longer than 4096 characters!");
-        } else if (fields != null && fields.size() > 25) {
+        } else if (this.fields != null && this.fields.size() > 25) {
             throw new IllegalStateException("Cannot build an embed with more than 25 fields!");
         } else {
             StringBuilder builder = new StringBuilder("{");
 
-            if (title != null && !title.isEmpty())
-                builder.append("\"title\":\"").append(title).append("\",");
+            if (this.title != null && !this.title.isEmpty())
+                builder.append("\"title\":\"").append(this.title).append("\",");
 
-            if (description != null && !description.isEmpty())
-                builder.append("\"description\":\"").append(description).append("\",");
+            if (this.description != null && !this.description.isEmpty())
+                builder.append("\"description\":\"").append(this.description).append("\",");
 
-            if (titleLink != null)
-                builder.append("\"url\":\"").append(titleLink).append("\",");
+            if (this.titleLink != null)
+                builder.append("\"url\":\"").append(this.titleLink).append("\",");
 
-            builder.append("\"color\":").append(color == null ? "null" : colorToDecimal(color)).append(",");
+            builder.append("\"color\":").append(this.color == null ? "null" : colorToDecimal(this.color)).append(",");
 
-            if (fields != null && !fields.isEmpty())
-                builder.append("\"fields\":[").append(String.join(",", fields.stream().map(Field::build).toList())).append("],");
+            if (this.fields != null && !this.fields.isEmpty())
+                builder.append("\"fields\":[").append(String.join(",", this.fields.stream().map(Field::build).toList())).append("],");
 
-            if (author != null && !author.isEmpty())
-                builder.append("\"author\":").append(author.build()).append(",");
+            if (this.author != null && !this.author.isEmpty())
+                builder.append("\"author\":").append(this.author.build()).append(",");
 
-            if (footer != null && !footer.isEmpty())
-                builder.append("\"footer\":").append(footer.build()).append(",");
+            if (this.footer != null && !this.footer.isEmpty())
+                builder.append("\"footer\":").append(this.footer.build()).append(",");
 
-            if (timestamp != null)
-                builder.append("\"timestamp\":\"").append(timestamp.format(TIMESTAMP_FORMATTER)).append("\",");
+            if (this.timestamp != null)
+                builder.append("\"timestamp\":\"").append(this.timestamp.format(TIMESTAMP_FORMATTER)).append("\",");
 
-            if (thumbnailUrl != null)
-                builder.append("\"thumbnail\":{\"url\":\"").append(thumbnailUrl).append("\"},");
+            if (this.thumbnailUrl != null)
+                builder.append("\"thumbnail\":{\"url\":\"").append(this.thumbnailUrl).append("\"},");
 
             builder.deleteCharAt(builder.lastIndexOf(",")).append("}");
             return builder.toString();
@@ -128,15 +131,15 @@ public class Embed {
      * @return A reference to this object.
      */
     public Embed clear() {
-        author = null;
-        title = null;
-        titleLink = null;
-        description = null;
-        color = null;
-        fields = null;
-        thumbnailUrl = null;
-        timestamp = null;
-        footer = null;
+        this.author = null;
+        this.title = null;
+        this.titleLink = null;
+        this.description = null;
+        this.color = null;
+        this.fields = null;
+        this.thumbnailUrl = null;
+        this.timestamp = null;
+        this.footer = null;
         return this;
     }
 
@@ -145,15 +148,15 @@ public class Embed {
      * @return A reference to this object.
      */
     public Embed clearNullAvoiding() {
-        author = new Author("", null, null);
-        title = "";
-        titleLink = null;
-        description = "";
-        color = null;
-        fields = List.of();
-        thumbnailUrl = null;
-        timestamp = null;
-        footer = new Footer("", null);
+        this.author = new Author("", null, null);
+        this.title = "";
+        this.titleLink = null;
+        this.description = "";
+        this.color = null;
+        this.fields = List.of();
+        this.thumbnailUrl = null;
+        this.timestamp = null;
+        this.footer = new Footer("", null);
         return this;
     }
 
@@ -162,15 +165,11 @@ public class Embed {
      * @return {@code true} if the embed is empty, {@code false} otherwise.
      */
     public boolean isEmpty() {
-        return (author == null || author.isEmpty()) &&
-                (title == null || title.isBlank()) &&
-                titleLink == null &&
-                (description == null || description.isBlank()) &&
-                color == null &&
-                (fields == null || fields.isEmpty() || fields.stream().allMatch(Field::isEmpty)) &&
-                thumbnailUrl == null &&
-                timestamp == null &&
-                (footer == null || footer.isEmpty());
+        return (this.author == null || this.author.isEmpty()) &&
+                (this.title == null || this.title.isBlank()) && this.titleLink == null &&
+                (this.description == null || this.description.isBlank()) && this.color == null &&
+                (this.fields == null || this.fields.isEmpty() || this.fields.stream().allMatch(Field::isEmpty)) && this.thumbnailUrl == null && this.timestamp == null &&
+                (this.footer == null || this.footer.isEmpty());
     }
 
     /**
@@ -178,7 +177,7 @@ public class Embed {
      * @return The embed's {@link Author}.
      */
     public Author getAuthor() {
-        return author;
+        return this.author;
     }
 
     /**
@@ -196,7 +195,7 @@ public class Embed {
      * @return The embed's title.
      */
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     /**
@@ -214,7 +213,7 @@ public class Embed {
      * @return The embed's title link that opens when clicking the title.
      */
     public URL getTitleLink() {
-        return titleLink;
+        return this.titleLink;
     }
 
     /**
@@ -244,7 +243,7 @@ public class Embed {
      * @return The embed's description.
      */
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     /**
@@ -263,7 +262,7 @@ public class Embed {
      * @return The embed's color.
      */
     public Color getColor() {
-        return color;
+        return this.color;
     }
 
     /**
@@ -281,7 +280,7 @@ public class Embed {
      * @return A list of all fields.
      */
     public List<Field> getFields() {
-        return fields;
+        return this.fields;
     }
 
     /**
@@ -341,7 +340,7 @@ public class Embed {
      * @return The URL of the thumbnail, which is the small image at the upper right corner or the bottom.
      */
     public URL getThumbnailUrl() {
-        return thumbnailUrl;
+        return this.thumbnailUrl;
     }
 
     /**
@@ -359,7 +358,7 @@ public class Embed {
      * @return The embed's {@link Footer footer information}.
      */
     public Footer getFooter() {
-        return footer;
+        return this.footer;
     }
 
     /**
@@ -377,7 +376,7 @@ public class Embed {
      * @param color The color to convert.
      * @return The converted decimal integer.
      */
-    public static int colorToDecimal(Color color) {
+    public static int colorToDecimal(@NotNull Color color) {
         return (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue();
     }
 
@@ -393,7 +392,7 @@ public class Embed {
          * @return {@code true} if the author is empty, {@code false} otherwise.
          */
         public boolean isEmpty() {
-            return name.isBlank() && iconUrl == null && url == null;
+            return this.name.isBlank() && this.iconUrl == null && this.url == null;
         }
 
         /**
@@ -401,17 +400,17 @@ public class Embed {
          * @return The formatted JSON representation.
          */
         public String build() {
-            if (isEmpty()) return "";
+            if (this.isEmpty()) return "";
             StringBuilder builder = new StringBuilder("{");
 
-            if (!name.isEmpty())
-                builder.append("\"name\":\"").append(name).append("\",");
+            if (!this.name.isEmpty())
+                builder.append("\"name\":\"").append(this.name).append("\",");
 
-            if (url != null)
-                builder.append("\"url\":\"").append(url).append("\",");
+            if (this.url != null)
+                builder.append("\"url\":\"").append(this.url).append("\",");
 
-            if (iconUrl != null)
-                builder.append("\"icon_url\":\"").append(iconUrl).append("\",");
+            if (this.iconUrl != null)
+                builder.append("\"icon_url\":\"").append(this.iconUrl).append("\",");
 
             builder.deleteCharAt(builder.lastIndexOf(",")).append("}");
             return builder.toString();
@@ -429,7 +428,7 @@ public class Embed {
          * @return {@code true} if the footer is empty, {@code false} otherwise.
          */
         public boolean isEmpty() {
-            return (text == null || text.isBlank()) && iconUrl == null;
+            return (this.text == null || this.text.isBlank()) && this.iconUrl == null;
         }
 
         /**
@@ -437,14 +436,14 @@ public class Embed {
          * @return The formatted JSON representation.
          */
         public String build() {
-            if (isEmpty()) return "";
+            if (this.isEmpty()) return "";
             StringBuilder builder = new StringBuilder("{");
 
-            if (text != null && !text.isEmpty())
-                builder.append("\"text\":\"").append(text).append("\",");
+            if (this.text != null && !this.text.isEmpty())
+                builder.append("\"text\":\"").append(this.text).append("\",");
 
-            if (iconUrl != null)
-                builder.append("\"icon_url\":\"").append(iconUrl).append("\",");
+            if (this.iconUrl != null)
+                builder.append("\"icon_url\":\"").append(this.iconUrl).append("\",");
 
             builder.deleteCharAt(builder.lastIndexOf(",")).append("}");
             return builder.toString();
@@ -463,15 +462,15 @@ public class Embed {
          * @return {@code true} if the field is blank, {@code false} otherwise.
          */
         public boolean isEmpty() {
-            return name.isBlank() && value.isBlank();
+            return this.name.isBlank() && this.value.isBlank();
         }
 
         /**
          * Formats the field into a compact representation in JSON, which is required for sending it to the Discord API.
          * @return The formatted JSON representation.
          */
-        public String build() {
-            return isEmpty() ? "" : "{\"name\":\"" + name + "\",\"value\":\"" + value + "\",\"inline\":" + inline + "}";
+        public @NotNull String build() {
+            return this.isEmpty() ? "" : "{\"name\":\"" + this.name + "\",\"value\":\"" + this.value + "\",\"inline\":" + this.inline + "}";
         }
     }
 }

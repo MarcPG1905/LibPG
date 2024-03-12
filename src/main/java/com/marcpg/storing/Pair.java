@@ -1,5 +1,7 @@
 package com.marcpg.storing;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -8,8 +10,8 @@ import java.util.function.Predicate;
  * It's the same as a {@link java.util.Map}, but with only one value.
  * @param <L> The left field's type
  * @param <R> The right field's type
- * @author MarcPG1905
  * @since 0.0.1
+ * @author MarcPG1905
  */
 public class Pair<L, R> {
     /**
@@ -41,7 +43,7 @@ public class Pair<L, R> {
      * @param l The new object for the left field.
      */
     public void setLeft(L l) {
-        left = l;
+        this.left = l;
     }
 
     /**
@@ -49,7 +51,7 @@ public class Pair<L, R> {
      * @return The left field
      */
     public L left() {
-        return left;
+        return this.left;
     }
 
     /**
@@ -57,7 +59,7 @@ public class Pair<L, R> {
      * @param r The new object for the right field.
      */
     public void setRight(R r) {
-        right = r;
+        this.right = r;
     }
 
     /**
@@ -65,7 +67,7 @@ public class Pair<L, R> {
      * @return The right field
      */
     public R right() {
-        return right;
+        return this.right;
     }
 
     /**
@@ -75,7 +77,7 @@ public class Pair<L, R> {
      * @return The object that's on the side.
      */
     public Object get(Side side) {
-        return side == Side.LEFT ? left : right;
+        return side == Side.LEFT ? this.left : this.right;
     }
 
     /**
@@ -92,8 +94,8 @@ public class Pair<L, R> {
      * Clears both the left and right side's values.
      */
     public void clear() {
-        left = null;
-        right = null;
+        this.left = null;
+        this.right = null;
     }
 
     /**
@@ -101,10 +103,8 @@ public class Pair<L, R> {
      * @param side The side to clear the value at.
      */
     public void clear(Side side) {
-        if (side == Side.LEFT)
-            left = null;
-        else
-            right = null;
+        if (side == Side.LEFT) this.left = null;
+        else this.right = null;
     }
 
     /**
@@ -113,7 +113,7 @@ public class Pair<L, R> {
      * @return If the pair is empty.
      */
     public boolean isEmpty() {
-        return left == null && right == null;
+        return this.left == null && this.right == null;
     }
 
     /**
@@ -122,7 +122,7 @@ public class Pair<L, R> {
      * @return If the pair is full.
      */
     public boolean isFull() {
-        return left != null && right != null;
+        return this.left != null && this.right != null;
     }
 
     /**
@@ -131,7 +131,7 @@ public class Pair<L, R> {
      * @return {@code true} if this pair contains the value, {@code false} otherwise.
      */
     public boolean contains(Object o) {
-        return left == o || right == o;
+        return this.left == o || this.right == o;
     }
 
     /**
@@ -140,7 +140,7 @@ public class Pair<L, R> {
      * @see #getHeavierObject()
      */
     public Side getHeavierSide() {
-        return left.toString().length() > right.toString().length() ? Side.LEFT : Side.RIGHT;
+        return this.left.toString().length() > this.right.toString().length() ? Side.LEFT : Side.RIGHT;
     }
 
     /**
@@ -149,7 +149,7 @@ public class Pair<L, R> {
      * @see #getHeavierSide()
      */
     public Object getHeavierObject() {
-        return get(getHeavierSide());
+        return this.get(this.getHeavierSide());
     }
 
     /**
@@ -157,9 +157,9 @@ public class Pair<L, R> {
      * @param operation The operation to run.
      * @since 0.0.5
      */
-    public void both(Consumer<Object> operation) {
-        operation.accept(left);
-        operation.accept(right);
+    public void both(@NotNull Consumer<Object> operation) {
+        operation.accept(this.left);
+        operation.accept(this.right);
     }
 
     /**
@@ -169,9 +169,9 @@ public class Pair<L, R> {
      * @param operation What to check for.
      * @since 0.0.5
      */
-    public Object getIf(Predicate<Object> operation) {
-        if (operation.test(left)) return left;
-        if (operation.test(right)) return right;
+    public Object getIf(@NotNull Predicate<Object> operation) {
+        if (operation.test(this.left)) return this.left;
+        if (operation.test(this.right)) return this.right;
         return null;
     }
 
@@ -182,7 +182,7 @@ public class Pair<L, R> {
      */
     @Override
     public String toString() {
-        return "{\"left\":" + left.toString() + ",\"right\":" + right.toString() + "}";
+        return "{\"left\":" + this.left.toString() + ",\"right\":" + this.right.toString() + "}";
     }
 
     /**
@@ -194,7 +194,7 @@ public class Pair<L, R> {
      * @return A new Pair instance with the set values.
      * @since 0.0.4
      */
-    public static <L, R> Pair<L, R> of(L left, R right) {
+    public static <L, R> @NotNull Pair<L, R> of(L left, R right) {
         return new Pair<>(left, right);
     }
 }

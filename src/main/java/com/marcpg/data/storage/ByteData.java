@@ -1,5 +1,7 @@
 package com.marcpg.data.storage;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * ByteData is used to convert and store data. <br>
  * Sources: <br>
@@ -27,8 +29,8 @@ public class ByteData {
      * @param unit The {@link Unit unit} of the {@link ByteData time} value.
      * @since 0.0.1
      */
-    public ByteData(long data, Unit unit) {
-        bytes = data * unit.bytes;
+    public ByteData(long data, @NotNull Unit unit) {
+        this.bytes = data * unit.bytes;
     }
 
     /**
@@ -63,8 +65,8 @@ public class ByteData {
      * @return The converted {@link ByteData byte-data}.
      * @since 0.0.1
      */
-    public long getAs(Unit unit) {
-        return bytes / unit.bytes;
+    public long getAs(@NotNull Unit unit) {
+        return this.bytes / unit.bytes;
     }
 
     /**
@@ -74,8 +76,8 @@ public class ByteData {
      * @return The converted {@link ByteData byte-data}.
      * @since 0.0.1
      */
-    public double getAsExact(Unit unit) {
-        return (double) bytes / unit.bytes;
+    public double getAsExact(@NotNull Unit unit) {
+        return (double) this.bytes / unit.bytes;
     }
 
 
@@ -88,7 +90,7 @@ public class ByteData {
      * @return The formatted {@link ByteData byte-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String oneUnitFormat(long b, Unit.Format format) {
+    public static @NotNull String oneUnitFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
 
         for (int i = units.length; i >= 1; i--) {
@@ -108,7 +110,7 @@ public class ByteData {
      * @return The formatted {@link ByteData byte-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String oneUnitFormat(ByteData byteData, Unit.Format format) {
+    public static @NotNull String oneUnitFormat(@NotNull ByteData byteData, Unit.Format format) {
         return oneUnitFormat(byteData.bytes, format);
     }
 
@@ -120,7 +122,7 @@ public class ByteData {
      * @return The formatted {@link ByteData byte-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String preciselyFormat(long b, Unit.Format format) {
+    public static @NotNull String preciselyFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
         StringBuilder result = new StringBuilder();
 
@@ -154,7 +156,7 @@ public class ByteData {
      * @return The formatted {@link ByteData byte-data} {@link String string}.
      * @since 0.0.1
      */
-    public static String preciselyFormat(ByteData byteData, Unit.Format format) {
+    public static @NotNull String preciselyFormat(@NotNull ByteData byteData, Unit.Format format) {
         return preciselyFormat(byteData.bytes, format);
     }
 
@@ -199,7 +201,7 @@ public class ByteData {
         public final Format format;
 
         Unit(long bytes, String abbreviation, Format format) {
-            abb = abbreviation;
+            this.abb = abbreviation;
             this.bytes = bytes;
             this.format = format;
         }
@@ -210,7 +212,7 @@ public class ByteData {
          * @return The english name.
          * @since 0.0.1
          */
-        public String eng() {
+        public @NotNull String eng() {
             return this.name().toLowerCase();
         }
 
@@ -219,7 +221,7 @@ public class ByteData {
          * @return The english name in plural.
          * @since 0.0.1
          */
-        public String pluralEng() {
+        public @NotNull String pluralEng() {
             return this.name().toLowerCase() + "s";
         }
 
@@ -227,8 +229,9 @@ public class ByteData {
          * Just the same as {@link #eng()} and {@link #pluralEng()}.
          * @since 0.0.1
          */
-        public String toString() {
-            return eng();
+        @Override
+        public @NotNull String toString() {
+            return this.eng();
         }
 
 

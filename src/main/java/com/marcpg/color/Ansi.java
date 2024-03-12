@@ -1,12 +1,14 @@
 package com.marcpg.color;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 
 /**
  * Ansi formatting can be used in nearly any text-based console.
  * It is very commonly used and supports many different formatting options, from bold, to blinking, to colored text, just everything.
- * @author MarcPG1905
  * @since 0.0.1
+ * @author MarcPG1905
  */
 public class Ansi {
     /** Resets all formatting */ public static final Ansi RESET = new Ansi(0);
@@ -53,39 +55,40 @@ public class Ansi {
     /** If the color is a custom RGB color or just a basic 4 bit color */
     private final boolean rgbColor;
 
+    @SuppressWarnings("SameParameterValue")
     private Ansi(int c, boolean rgb) {
-        code = c;
-        rgbColor = rgb;
-        color = true;
+        this.code = c;
+        this.rgbColor = rgb;
+        this.color = true;
     }
 
     private Ansi(int c) {
-        code = c;
-        rgbColor = false;
-        color = false;
+        this.code = c;
+        this.rgbColor = false;
+        this.color = false;
     }
 
     private Ansi(int r, int g, int b) {
-        code = r;
-        codeG = g;
-        codeB = b;
-        rgbColor = true;
-        color = true;
+        this.code = r;
+        this.codeG = g;
+        this.codeB = b;
+        this.rgbColor = true;
+        this.color = true;
     }
 
-    private String get(boolean bg) {
+    private @NotNull String get(boolean bg) {
         StringBuilder ansi = new StringBuilder("\033[");
-        if (!color) {
-            ansi.append(code);
+        if (!this.color) {
+            ansi.append(this.code);
         } else {
             ansi.append(bg ? "4" : "3");
-            if (rgbColor) {
+            if (this.rgbColor) {
                 ansi.append("8;2;")
-                        .append(code).append(";")
-                        .append(codeG).append(";")
-                        .append(codeB);
+                        .append(this.code).append(";")
+                        .append(this.codeG).append(";")
+                        .append(this.codeB);
             } else {
-                ansi.append("0;").append(code);
+                ansi.append("0;").append(this.code);
             }
         }
         return ansi.append('m').toString();
@@ -98,7 +101,7 @@ public class Ansi {
      * @since 0.0.1
      */
     public String getBackground() {
-        return get(true);
+        return this.get(true);
     }
 
     /**
@@ -107,7 +110,7 @@ public class Ansi {
      * @since 0.0.1
      */
     public String get() {
-        return get(false);
+        return this.get(false);
     }
 
     /**
@@ -117,7 +120,7 @@ public class Ansi {
      */
     @Override
     public String toString() {
-        return get();
+        return this.get();
     }
 
     /**
@@ -128,7 +131,7 @@ public class Ansi {
      * @return A custom ansi color
      * @since 0.0.1
      */
-    public static Ansi fromRGB(int r, int g, int b) {
+    public static @NotNull Ansi fromRGB(int r, int g, int b) {
         return new Ansi(r, g, b);
     }
 
@@ -138,7 +141,7 @@ public class Ansi {
      * @return A custom ansi color
      * @since 0.0.1
      */
-    public static Ansi fromColor(Color color) {
+    public static @NotNull Ansi fromColor(@NotNull Color color) {
         return new Ansi(color.getRed(), color.getGreen(), color.getBlue());
     }
 
@@ -149,10 +152,21 @@ public class Ansi {
      * @return The formatted string
      * @since 0.0.1
      */
-    public static String formattedString(String text, Ansi... formats) {
+    public static @NotNull String formattedString(String text, Ansi @NotNull ... formats) {
         StringBuilder builder = new StringBuilder();
         for (Ansi format : formats) builder.append(format.get());
         return builder + text + Ansi.RESET;
+    }
+
+    /**
+     * Colors a specified text {@link #DARK_GRAY gray}, which can be used for secondary text for example. <br>
+     * Uses dark gray, as some consoles make {@link #GRAY normal gray} appear white.
+     * @param text The text to color gray.
+     * @return The colored text.
+     * @see #formattedString(String, Ansi...)
+     */
+    public static @NotNull String gray(String text) {
+        return formattedString(text, DARK_GRAY);
     }
 
     /**
@@ -161,7 +175,7 @@ public class Ansi {
      * @return The colored text.
      * @see #formattedString(String, Ansi...)
      */
-    public static String red(String text) {
+    public static @NotNull String red(String text) {
         return formattedString(text, RED);
     }
 
@@ -171,7 +185,7 @@ public class Ansi {
      * @return The colored text.
      * @see #formattedString(String, Ansi...)
      */
-    public static String yellow(String text) {
+    public static @NotNull String yellow(String text) {
         return formattedString(text, YELLOW);
     }
 
@@ -181,7 +195,7 @@ public class Ansi {
      * @return The colored text.
      * @see #formattedString(String, Ansi...)
      */
-    public static String green(String text) {
+    public static @NotNull String green(String text) {
         return formattedString(text, GREEN);
     }
 
@@ -191,7 +205,7 @@ public class Ansi {
      * @return The blinking text.
      * @see #formattedString(String, Ansi...)
      */
-    public static String blink(String text) {
+    public static @NotNull String blink(String text) {
         return formattedString(text, BLINK);
     }
 
@@ -201,7 +215,7 @@ public class Ansi {
      * @return The bold/thick text.
      * @see #formattedString(String, Ansi...)
      */
-    public static String bold(String text) {
+    public static @NotNull String bold(String text) {
         return formattedString(text, BOLD);
     }
 
@@ -211,7 +225,7 @@ public class Ansi {
      * @return The italic text.
      * @see #formattedString(String, Ansi...)
      */
-    public static String italic(String text) {
+    public static @NotNull String italic(String text) {
         return formattedString(text, ITALIC);
     }
 }

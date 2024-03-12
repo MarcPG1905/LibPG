@@ -5,7 +5,11 @@ import net.kyori.adventure.text.TextComponent;
 
 import java.util.Locale;
 
-/** Simple abstract class for making every translatable class organized into the same translation methods. */
+/**
+ * Simple abstract class for making every translatable class organized into the same translation methods.
+ * @since 0.0.6
+ * @author MarcPG1905
+ */
 public abstract class Translatable {
     /**
      * Translates the class based on the given locale and outputs it as a {@link String} representation.

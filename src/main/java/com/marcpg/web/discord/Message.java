@@ -5,9 +5,9 @@ import java.util.List;
 
 /**
  * Represents a full Discord webhook message that can be converted into a raw JSON.
- * @since 0.0.4
  * @see Webhook
  * @see Embed
+ * @since 0.0.4
  * @author MarcPG1905
  */
 public class Message {
@@ -130,36 +130,36 @@ public class Message {
      * @return The formatted JSON representation.
      */
     public String build() {
-        if (isEmpty()) {
+        if (this.isEmpty()) {
             throw new IllegalStateException("Cannot build an empty message!");
-        } else if (content != null && content.length() > 2000) {
+        } else if (this.content != null && this.content.length() > 2000) {
             throw new IllegalStateException("Cannot build a message with content longer than 2000 characters!");
         } else {
             StringBuilder builder = new StringBuilder("{\"content\":");
 
-            if (content != null && !content.isEmpty())
-                builder.append("\"").append(content).append("\",");
+            if (this.content != null && !this.content.isEmpty())
+                builder.append("\"").append(this.content).append("\",");
             else
                 builder.append("null,");
 
-            if (username != null && !username.isEmpty())
-                builder.append("\"username\":\"").append(username).append("\",");
+            if (this.username != null && !this.username.isEmpty())
+                builder.append("\"username\":\"").append(this.username).append("\",");
 
-            if (avatarUrl != null)
-                builder.append("\"avatar_url\":\"").append(avatarUrl).append("\",");
+            if (this.avatarUrl != null)
+                builder.append("\"avatar_url\":\"").append(this.avatarUrl).append("\",");
 
-            if (threadName != null)
-                builder.append("\"thread_name\":\"").append(threadName).append("\",");
+            if (this.threadName != null)
+                builder.append("\"thread_name\":\"").append(this.threadName).append("\",");
 
-            if (tts)
+            if (this.tts)
                 builder.append("\"tts\":true,");
 
-            if (silent)
+            if (this.silent)
                 builder.append("\"flags\":4096,");
 
             builder.append("\"embeds\":");
-            if (embeds != null && !embeds.isEmpty())
-                builder.append("[").append(String.join(",", embeds.stream().map(Embed::build).toList())).append("]");
+            if (this.embeds != null && !this.embeds.isEmpty())
+                builder.append("[").append(String.join(",", this.embeds.stream().map(Embed::build).toList())).append("]");
             else
                 builder.append("null");
 
@@ -172,8 +172,8 @@ public class Message {
      * @return A reference to this object.
      */
     public Message clear() {
-        content = null;
-        embeds = null;
+        this.content = null;
+        this.embeds = null;
         return this;
     }
 
@@ -182,8 +182,8 @@ public class Message {
      * @return A reference to this object.
      */
     public Message clearNullAvoiding() {
-        content = "";
-        embeds = List.of();
+        this.content = "";
+        this.embeds = List.of();
         return this;
     }
 
@@ -192,7 +192,7 @@ public class Message {
      * @return {@code true} if the message is empty, {@code false} otherwise.
      */
     public boolean isEmpty() {
-        return (content == null || content.isBlank()) && (embeds == null || embeds.isEmpty() || embeds.stream().allMatch(Embed::isEmpty));
+        return (this.content == null || this.content.isBlank()) && (this.embeds == null || this.embeds.isEmpty() || this.embeds.stream().allMatch(Embed::isEmpty));
     }
 
     /**
@@ -200,7 +200,7 @@ public class Message {
      * @return The custom avatar's username.
      */
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     /**
@@ -218,7 +218,7 @@ public class Message {
      * @return The custom avatar's profile picture URL.
      */
     public URL getAvatarUrl() {
-        return avatarUrl;
+        return this.avatarUrl;
     }
 
     /**
@@ -236,7 +236,7 @@ public class Message {
      * @return The name of the channel's thread to post in.
      */
     public String getThreadName() {
-        return threadName;
+        return this.threadName;
     }
 
     /**
@@ -254,7 +254,7 @@ public class Message {
      * @return If the message is sent as a text-to-speech message.
      */
     public boolean isTTS() {
-        return tts;
+        return this.tts;
     }
 
     /**
@@ -272,7 +272,7 @@ public class Message {
      * @return The message's raw content.
      */
     public String getContent() {
-        return content;
+        return this.content;
     }
 
     /**
@@ -290,7 +290,7 @@ public class Message {
      * @return A list of all embeds.
      */
     public List<Embed> getEmbeds() {
-        return embeds;
+        return this.embeds;
     }
 
     /**
@@ -338,7 +338,7 @@ public class Message {
      * @return If the message is a silent message.
      */
     public boolean isSilent() {
-        return silent;
+        return this.silent;
     }
 
     /**

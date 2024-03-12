@@ -1,10 +1,8 @@
 package com.marcpg;
 
-import java.util.*;
-
 /**
  * Provides some basic information about the version of LibPG that you're using. <br><br>
- * Version:        0.0.7 <br>
+ * Version:        0.0.8 <br>
  * Java Version:   17 <br>
  * Contributor(s): MarcPG1905 <br>
  * Website:        <a href="https://marcpg.com/libpg/">MarcPG.COM/LibPG</a> <br>
@@ -14,7 +12,7 @@ import java.util.*;
  */
 public class LibPG {
     /** The version of LibPG that you're using. */
-    public static final String VERSION = "0.0.7";
+    public static final String VERSION = "0.0.8";
 
     /** The version of Java that LibPG is written in. */
     public static final int JAVA_VERSION = 17;

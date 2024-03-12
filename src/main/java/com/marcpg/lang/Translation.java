@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 /**
  * Provides easy translations based on simple {@link Properties .properties} files.
+ * @since 0.0.6
+ * @author MarcPG1905
  */
 public class Translation {
     /** The locale to default to if the loaded translations don't contain the given locale. */
@@ -33,7 +35,7 @@ public class Translation {
      * @param folder The folder in which all the translation files are stored.
      * @throws IOException if the language folder doesn't exist or there was an error while creating the {@link FileInputStream}.
      */
-    public static void loadProperties(File folder) throws IOException {
+    public static void loadProperties(@NotNull File folder) throws IOException {
         if (!folder.exists()) {
             throw new IOException("The specified translation folder does not exist: " + folder.getAbsolutePath());
         }
@@ -64,7 +66,7 @@ public class Translation {
      * @return The translation with all placeholders replaced with the variables if
      *         everything worked or just the key if the translation wasn't found.
      */
-    public static String string(Locale locale, String key, Object... variables) {
+    public static @NotNull String string(Locale locale, String key, Object... variables) {
         return MessageFormat.format(string(locale, key), variables);
     }
 

@@ -1,5 +1,7 @@
 package com.marcpg.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Randomizer {
         throw new AssertionError("Instantiating static-only utility class.");
     }
 
+    /** The current {@link Random java.util.Random} that's being used. */
     private static Random random = new Random();
 
     /**
@@ -68,7 +71,7 @@ public class Randomizer {
      * @return A random {@link Object object} from the input array.
      * @since 0.0.1
      */
-    public static <T> T fromArray(T[] in) {
+    public static <T> T fromArray(T @NotNull [] in) {
         return in[random.nextInt(in.length)];
     }
 
@@ -79,7 +82,7 @@ public class Randomizer {
      * @return A randomly generated {@link String String}
      * @since 0.0.1
      */
-    public static String generateRandomString(Integer length, String charset) {
+    public static @NotNull String generateRandomString(Integer length, String charset) {
         StringBuilder builder = new StringBuilder(length);
 
         for(int i = 0; i < length; ++i) {
@@ -97,7 +100,7 @@ public class Randomizer {
      * @return A randomly generated {@link String String}
      * @since 0.0.1
      */
-    public static String generateRandomString(int length) {
+    public static @NotNull String generateRandomString(int length) {
         return generateRandomString(length, BASIC_CHARS);
     }
 
@@ -107,7 +110,7 @@ public class Randomizer {
      * @return A random {@link Character character}
      * @since 0.0.1
      */
-    public static char randomChar(String charset) {
+    public static char randomChar(@NotNull String charset) {
         return charset.charAt(random.nextInt(charset.length()));
     }
 

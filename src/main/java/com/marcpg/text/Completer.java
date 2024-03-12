@@ -1,5 +1,7 @@
 package com.marcpg.text;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +28,7 @@ public class Completer {
      * @see #startComplete(String, String[])
      * @since 0.0.1
      */
-    public static List<String> startComplete(String input, Collection<String> suggested) {
+    public static List<String> startComplete(String input, @NotNull Collection<String> suggested) {
         return suggested.stream().filter(string -> string.toLowerCase().startsWith(input.toLowerCase())).collect(Collectors.toList());
     }
 
@@ -56,7 +58,7 @@ public class Completer {
      * @see #containComplete(String, String[])
      * @since 0.0.1
      */
-    public static List<String> containComplete(String input, Collection<String> suggested) {
+    public static List<String> containComplete(String input, @NotNull Collection<String> suggested) {
         return suggested.stream().filter(string -> string.toLowerCase().contains(input.toLowerCase())).collect(Collectors.toList());
     }
 
@@ -86,7 +88,7 @@ public class Completer {
      * @see #semiSmartComplete(String, String[])
      * @since 0.0.2
      */
-    public static List<String> semiSmartComplete(String input, Collection<String> suggested) {
+    public static List<String> semiSmartComplete(@NotNull String input, Collection<String> suggested) {
         if (input.length() >= 3) {
             return startComplete(input, suggested);
         } else {
@@ -105,7 +107,7 @@ public class Completer {
      * @see #semiSmartComplete(String, Collection)
      * @since 0.0.2
      */
-    public static List<String> semiSmartComplete(String input, String[] suggested) {
+    public static List<String> semiSmartComplete(@NotNull String input, String[] suggested) {
         if (input.length() >= 3) {
             return startComplete(input, suggested);
         } else {
