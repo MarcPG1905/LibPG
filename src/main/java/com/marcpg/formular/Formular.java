@@ -1,8 +1,6 @@
 package com.marcpg.formular;
 
 import com.marcpg.formular.question.Question;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +16,6 @@ import java.util.function.Consumer;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public abstract class Formular {
     /** The formular's title. */
     protected String title;
@@ -151,7 +147,20 @@ public abstract class Formular {
      * @return The converted formular result..
      */
     public final @NotNull FormularResult toResult() {
-        return new FormularResult(this.questions.stream().map(Question::toResult).toList());
+        return new FormularResult(this.questions.stream().filter(Question::isSubmitted).map(Question::toResult).toList());
+    }
+
+    /**
+     * Gets a question of this formular based on its ID.
+     * @param id The question's ID.
+     * @return The question matching the specified ID or {@code null} otherwise.
+     */
+    public final @Nullable Question getQuestion(String id) {
+        for (Question question : this.questions) {
+            if (question.id.equals(id))
+                return question;
+        }
+        return null;
     }
 
     /**

@@ -1,9 +1,5 @@
 package com.marcpg.formular;
 
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,8 +9,6 @@ import java.util.List;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class FormularResult {
     /** A list of all results of this formular result. */
     public final List<Result> results;
@@ -78,6 +72,12 @@ public class FormularResult {
      */
     public interface Result {
         /**
+         * Gets this result's id.
+         * @return The result's id.
+         */
+        String id();
+
+        /**
          * Gets this result's value as an Object.
          * @return The result's value.
          */
@@ -86,60 +86,60 @@ public class FormularResult {
 
     /**
      * Represents a result of a {@link com.marcpg.formular.question.TextQuestion}.
-     * @param name The question's name.
+     * @param id The question's id.
      * @param text The result's value.
      */
-    public record TextResult(String name, String text) implements Result {
+    public record TextResult(String id, String text) implements Result {
         @Override
-        public @Nullable Object result() {
+        public String result() {
             return this.text;
         }
     }
 
     /**
      * Represents a result of a {@link com.marcpg.formular.question.IntegerQuestion}.
-     * @param name The question's name.
+     * @param id The question's id.
      * @param value The result's value.
      */
-    public record IntegerResult(String name, int value) implements Result {
+    public record IntegerResult(String id, long value) implements Result {
         @Override
-        public Object result() {
+        public Long result() {
             return this.value;
         }
     }
 
     /**
      * Represents a result of a {@link com.marcpg.formular.question.BooleanQuestion}.
-     * @param name The question's name.
+     * @param id The question's id.
      * @param value The result's value.
      */
-    public record BooleanResult(String name, boolean value) implements Result {
+    public record BooleanResult(String id, boolean value) implements Result {
         @Override
-        public Object result() {
+        public Boolean result() {
             return this.value;
         }
     }
 
     /**
      * Represents a result of a {@link com.marcpg.formular.question.MultipleChoiceQuestion}.
-     * @param name The question's name.
+     * @param id The question's id.
      * @param value The result's value.
      */
-    public record MultipleChoiceResult(String name, String value) implements Result {
+    public record MultipleChoiceResult(String id, String value) implements Result {
         @Override
-        public Object result() {
+        public String result() {
             return this.value;
         }
     }
 
     /**
      * Represents a result of a {@link com.marcpg.formular.question.CheckboxesQuestion}.
-     * @param name The question's name.
+     * @param id The question's id.
      * @param chosen A list of the result's values.
      */
-    public record CheckboxesResult(String name, List<String> chosen) implements Result {
+    public record CheckboxesResult(String id, List<String> chosen) implements Result {
         @Override
-        public Object result() {
+        public List<String> result() {
             return this.chosen;
         }
     }

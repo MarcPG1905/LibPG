@@ -4,8 +4,7 @@ import com.marcpg.color.Ansi;
 import com.marcpg.formular.CLIFormular;
 import com.marcpg.formular.FormularResult;
 import com.marcpg.text.Formatter;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
+import org.intellij.lang.annotations.Pattern;
 
 import java.io.IOException;
 
@@ -15,48 +14,49 @@ import java.io.IOException;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class IntegerQuestion extends Question {
-    private final int min;
-    private final int max;
+    private final long min;
+    private final long max;
     private boolean negative;
-    private int input;
+    private long input;
 
     /**
      * Creates a new integer question with a minimum and maximum value.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param min The minimum value that can be set.
      * @param max The maximum value that can be set.
      */
-    public IntegerQuestion(String title, String description, int min, int max) {
-        super(title, description);
+    public IntegerQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, long min, long max) {
+        super(id, title, description);
         this.min = min;
         this.max = max;
     }
 
     /**
      * Creates a new integer question with minimum value of 0 and a set maximum value.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param max The maximum value that can be set.
      */
-    public IntegerQuestion(String title, String description, int max) {
-        super(title, description);
+    public IntegerQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, int max) {
+        super(id, title, description);
         this.min = 0;
         this.max = max;
     }
 
     /**
      * Creates a new integer question with no bounds.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      */
-    public IntegerQuestion(String title, String description) {
-        super(title, description);
-        this.min = Integer.MIN_VALUE;
-        this.max = Integer.MAX_VALUE;
+    public IntegerQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description) {
+        super(id, title, description);
+        this.min = Long.MIN_VALUE;
+        this.max = Long.MAX_VALUE;
     }
 
     @Override
@@ -98,13 +98,13 @@ public class IntegerQuestion extends Question {
     }
 
     @Override
-    public Integer getInput() {
+    public Long getInput() {
         return this.negative ? -Math.abs(this.input) : this.input;
     }
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.IntegerResult(this.title, this.negative ? -this.input : this.input);
+        return new FormularResult.IntegerResult(this.id, this.negative ? -this.input : this.input);
     }
 
     /**
@@ -115,6 +115,12 @@ public class IntegerQuestion extends Question {
     public synchronized void cliRender() {
         if (this.form instanceof CLIFormular cliForm) {
             while (true) {
+                if (this.invalid()) {
+                    this.form.nextQuestion();
+                    this.form.render();
+                    return;
+                }
+
                 cliForm.clearOutput();
 
                 System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
@@ -124,13 +130,17 @@ public class IntegerQuestion extends Question {
                 System.out.println(Ansi.gray("\n|| [ENTER]: Submit ||\n"));
 
                 System.out.print(Ansi.gray("Enter a number" +
-                        (this.min == Integer.MIN_VALUE ? "" : " from " + this.min) +
-                        (this.max == Integer.MAX_VALUE ? "" : " to " + this.max) +
+                        (this.min == Long.MIN_VALUE ? "" : " from " + this.min) +
+                        (this.max == Long.MAX_VALUE ? "" : " to " + this.max) +
                         ": " + (this.inBounds(this.negative ? -this.input : this.input) ? "" : Ansi.RED) + (this.negative ? "-" : " ") + this.input + (this.inBounds(this.negative ? -this.input : this.input) ? "" : Ansi.RESET)));
                 try {
                     int number = cliForm.input.read(true);
                     if (number >= 48 && number <= 57) {
-                        this.input = Integer.parseInt(this.input + "" + (number - 48));
+                        try {
+                            this.input = Long.parseLong(this.input + "" + (number - 48));
+                        } catch (NumberFormatException e) {
+                            this.input = Long.MAX_VALUE;
+                        }
                     } else if (number == 45 && this.input == 0) {
                         this.negative = true;
                     } else if ((number == 8 || number == 127)) {
@@ -141,7 +151,7 @@ public class IntegerQuestion extends Question {
                             if (s.length() == 1) {
                                 this.input = 0;
                             } else {
-                                this.input = Integer.parseInt(s.substring(0, s.length() - 1));
+                                this.input = Long.parseLong(s.substring(0, s.length() - 1));
                             }
                         }
                     } else if ((number == 10 || number == 13) && this.inBounds(this.negative ? -this.input : this.input)) {
@@ -158,7 +168,7 @@ public class IntegerQuestion extends Question {
         }
     }
 
-    private boolean inBounds(int number) {
+    private boolean inBounds(long number) {
         return this.input <= this.max && this.input >= this.min;
     }
 }

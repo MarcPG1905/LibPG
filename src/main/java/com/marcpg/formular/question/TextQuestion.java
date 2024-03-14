@@ -4,10 +4,12 @@ import com.marcpg.color.Ansi;
 import com.marcpg.formular.CLIFormular;
 import com.marcpg.formular.FormularResult;
 import com.marcpg.text.Formatter;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
+import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
 /**
@@ -17,30 +19,30 @@ import java.io.IOException;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class TextQuestion extends Question {
     private final int characterLimit;
     private StringBuilder input = new StringBuilder();
 
     /**
      * Creates a new text question with a specific character limit.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param characterLimit How long the text can be.
      */
-    public TextQuestion(String title, String description, int characterLimit) {
-        super(title, description);
+    public TextQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, int characterLimit) {
+        super(id, title, description);
         this.characterLimit = characterLimit;
     }
 
     /**
      * Creates a new text question with the default character limit of 128.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      */
-    public TextQuestion(String title, String description) {
-        super(title, description);
+    public TextQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description) {
+        super(id, title, description);
         this.characterLimit = 128;
     }
 
@@ -98,7 +100,7 @@ public class TextQuestion extends Question {
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.TextResult(this.title, this.input.toString());
+        return new FormularResult.TextResult(this.id, this.input.toString());
     }
 
     /**
@@ -109,6 +111,12 @@ public class TextQuestion extends Question {
     public synchronized void cliRender() {
         if (this.form instanceof CLIFormular cliForm) {
             while (true) {
+                if (this.invalid()) {
+                    this.form.nextQuestion();
+                    this.form.render();
+                    return;
+                }
+
                 cliForm.clearOutput();
 
                 System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
@@ -124,6 +132,8 @@ public class TextQuestion extends Question {
                         this.input.append((char) character);
                     } else if ((character == 8 || character == 127) && !this.input.isEmpty()) {
                         this.input.deleteCharAt(this.input.length() - 1);
+                    } else if (character == 22) {
+                        this.pasteFromClipboard();
                     } else if ((character == 10 || character == 13) && !this.input.toString().isBlank()) {
                         this.submit();
                         this.form.render();
@@ -136,6 +146,14 @@ public class TextQuestion extends Question {
         } else {
             throw new IllegalStateException("Cannot use CLI rendering in a non-cli formular!");
         }
+    }
+
+    private void pasteFromClipboard() {
+        try {
+            this.input.append(Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor));
+            if (this.input.length() > this.characterLimit)
+                this.input.setLength(this.characterLimit);
+        } catch (IllegalStateException | UnsupportedFlavorException | IOException ignored) {}
     }
 
     private boolean tooLong(@NotNull CharSequence str) {

@@ -2,8 +2,7 @@ package com.marcpg.formular.question;
 
 import com.marcpg.formular.Formular;
 import com.marcpg.formular.FormularResult;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
+import com.marcpg.storing.Pair;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public abstract class Question {
     /** The question's description. */
     protected Formular form;
@@ -21,17 +18,25 @@ public abstract class Question {
     protected boolean submitted = false;
 
     /** The question's title. */
-    protected final String title;
+    public final String id;
+
+    /** The question's title. */
+    public final String title;
 
     /** The question's description. */
-    protected final String description;
+    public final String description;
+
+    /** The question's requirement. Pair(ID, Value). */
+    protected Pair<String, Object> requirement;
 
     /**
      * Creates a new question.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      */
-    protected Question(String title, String description) {
+    protected Question(String id, String title, String description) {
+        this.id = id;
         this.title = title;
         this.description = description;
     }
@@ -45,6 +50,33 @@ public abstract class Question {
     }
 
     /**
+     * Sets the requirement of this question.  It works by checking if
+     * the question with the set ID has the specified value or not.
+     * The question is checked from this question's formular.
+     * @param questionId The checked question's ID.
+     * @param questionValue The value to check for.
+     * @return A reference to this object.
+     */
+    public Question setRequirement(String questionId, Object questionValue) {
+        this.requirement = Pair.of(questionId, questionValue);
+        return this;
+    }
+
+    /**
+     * Checks if this question does not meet the set requirement, if it's set.
+     * @return {@code true} if the question doesn't meet the set requirement. <br>
+     *         {@code false} if the question meets the set requirement.
+     */
+    protected final boolean invalid() {
+        if (this.requirement == null) return false;
+
+        Question question = this.form.getQuestion(this.requirement.left());
+        if (this.form == null || question == null)
+            return true;
+        return question.toResult().result() != this.requirement.right();
+    }
+
+    /**
      * Resets the state of this question to be as if it was just created.
      * Won't reset the question's settings, but only the already chosen and rendered things.
      */
@@ -52,6 +84,14 @@ public abstract class Question {
 
     /** Submits the question with the current choice and locks in a final answer. */
     public abstract void submit();
+
+    /**
+     * Checks if the question is already submitted or not.
+     * @return If the question is already submitted or not.
+     */
+    public final boolean isSubmitted() {
+        return this.submitted;
+    }
 
     /**
      * Gets the current or preferably final input of the question.

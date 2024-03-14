@@ -4,8 +4,7 @@ import com.marcpg.color.Ansi;
 import com.marcpg.formular.CLIFormular;
 import com.marcpg.formular.FormularResult;
 import com.marcpg.text.Formatter;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
+import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,31 +20,31 @@ import java.util.stream.Collectors;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class CheckboxesQuestion extends Question {
     private final Map<String, Boolean> input;
     private int cursorIndex = 0;
 
     /**
      * Creates a new checkboxes question.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param choices A list of all choices that can be checked.
      */
-    public CheckboxesQuestion(String title, String description, @NotNull List<String> choices) {
-        super(title, description);
+    public CheckboxesQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, @NotNull List<String> choices) {
+        super(id, title, description);
         this.input = choices.stream().collect(Collectors.toMap(s -> s, s -> false));
     }
 
     /**
      * Creates a new checkboxes question.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param choices All choices that can be checked.
      */
-    public CheckboxesQuestion(String title, String description, String... choices) {
-        super(title, description);
+    public CheckboxesQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, String... choices) {
+        super(id, title, description);
         this.input = Arrays.stream(choices).collect(Collectors.toMap(s -> s, s -> false));
     }
 
@@ -94,7 +93,7 @@ public class CheckboxesQuestion extends Question {
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.CheckboxesResult(this.title, this.input.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).toList());
+        return new FormularResult.CheckboxesResult(this.id, this.input.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).toList());
     }
 
     /**
@@ -106,6 +105,12 @@ public class CheckboxesQuestion extends Question {
     public synchronized void cliRender() {
         if (this.form instanceof CLIFormular cliForm) {
             while (true) {
+                if (this.invalid()) {
+                    this.form.nextQuestion();
+                    this.form.render();
+                    return;
+                }
+
                 cliForm.clearOutput();
 
                 System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));

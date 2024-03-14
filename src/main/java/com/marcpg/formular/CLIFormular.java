@@ -3,8 +3,6 @@ package com.marcpg.formular;
 import com.marcpg.color.Ansi;
 import com.marcpg.formular.question.Question;
 import com.marcpg.text.Formatter;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,8 +18,6 @@ import java.util.function.Consumer;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class CLIFormular extends Formular {
     /**
      * Represents simple button bindings for the console-based input.

@@ -2,7 +2,6 @@ package com.marcpg.formular;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
-import jdk.jfr.Experimental;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +26,7 @@ import java.util.List;
  * @since 0.0.8
  * @author Christian d'Heureuse (<a href="http://www.source-code.biz/snippets/java/RawConsoleInput">source-code.biz</a>)
  */
-@ApiStatus.Experimental
-@Experimental
+@ApiStatus.Internal
 @SuppressWarnings("SpellCheckingInspection")
 public final class RawConsoleInput {
     private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
@@ -270,12 +268,24 @@ public final class RawConsoleInput {
         this.consoleModeAltered = false;
     }
 
+    /** Internal - Should not be used outside of this class! */
     protected static class Termios extends Structure {
+        /** Internal - Should not be used outside of this class! */
         public int c_iflag;
+
+        /** Internal - Should not be used outside of this class! */
         public int c_oflag;
+
+        /** Internal - Should not be used outside of this class! */
         public int c_cflag;
+        
+        /** Internal - Should not be used outside of this class! */
         public int c_lflag;
+
+        /** Internal - Should not be used outside of this class! */
         public byte c_line;
+
+        /** Internal - Should not be used outside of this class! */
         public byte[] filler = new byte[64];
 
         @Override

@@ -4,8 +4,7 @@ import com.marcpg.color.Ansi;
 import com.marcpg.formular.CLIFormular;
 import com.marcpg.formular.FormularResult;
 import com.marcpg.text.Formatter;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
+import org.intellij.lang.annotations.Pattern;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,8 +16,6 @@ import java.util.Scanner;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class BooleanQuestion extends Question {
     /** All starting letters that correspond to a negative answer. */
     public static final List<Character> FALSE_LETTERS = List.of('f', 'n');
@@ -31,23 +28,25 @@ public class BooleanQuestion extends Question {
 
     /**
      * Creates a new boolean question.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param defaultChoice The question's default choice.
      */
-    public BooleanQuestion(String title, String description, boolean defaultChoice) {
-        super(title, description);
+    public BooleanQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, boolean defaultChoice) {
+        super(id, title, description);
         this.defaultChoice = defaultChoice;
         this.choice = defaultChoice;
     }
 
     /**
      * Creates a new boolean question with the default choice set to true.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      */
-    public BooleanQuestion(String title, String description) {
-        super(title, description);
+    public BooleanQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description) {
+        super(id, title, description);
         this.defaultChoice = true;
         this.choice = true;
     }
@@ -100,7 +99,7 @@ public class BooleanQuestion extends Question {
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.BooleanResult(this.title, this.choice);
+        return new FormularResult.BooleanResult(this.id, this.choice);
     }
 
     /**
@@ -110,6 +109,12 @@ public class BooleanQuestion extends Question {
     @Override
     public void cliRender() {
         if (this.form instanceof CLIFormular cliForm) {
+            if (this.invalid()) {
+                this.form.nextQuestion();
+                this.form.render();
+                return;
+            }
+
             try {
                 cliForm.input.resetConsoleMode();
             } catch (IOException e) {

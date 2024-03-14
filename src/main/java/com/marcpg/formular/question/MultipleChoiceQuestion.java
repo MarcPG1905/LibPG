@@ -4,8 +4,7 @@ import com.marcpg.color.Ansi;
 import com.marcpg.formular.CLIFormular;
 import com.marcpg.formular.FormularResult;
 import com.marcpg.text.Formatter;
-import jdk.jfr.Experimental;
-import org.jetbrains.annotations.ApiStatus;
+import org.intellij.lang.annotations.Pattern;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,8 +16,6 @@ import java.util.List;
  * @since 0.0.8
  * @author MarcPG1905
  */
-@ApiStatus.Experimental
-@Experimental
 public class MultipleChoiceQuestion extends Question {
     private final List<String> choices;
     private int cursorIndex = 0;
@@ -26,23 +23,25 @@ public class MultipleChoiceQuestion extends Question {
 
     /**
      * Creates a new multiple-choice question.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param choices A list of the choices that can be chosen from.
      */
-    public MultipleChoiceQuestion(String title, String description, List<String> choices) {
-        super(title, description);
+    public MultipleChoiceQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, List<String> choices) {
+        super(id, title, description);
         this.choices = choices;
     }
 
     /**
      * Creates a new multiple-choice question.
+     * @param id The question's <b>unique</b> identifier.
      * @param title The question's title.
      * @param description The question's description.
      * @param choices The choices that can be chosen from.
      */
-    public MultipleChoiceQuestion(String title, String description, String... choices) {
-        super(title, description);
+    public MultipleChoiceQuestion(@Pattern("[a-z0-9_-]+") String id, String title, String description, String... choices) {
+        super(id, title, description);
         this.choices = List.of(choices);
     }
 
@@ -100,7 +99,7 @@ public class MultipleChoiceQuestion extends Question {
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.MultipleChoiceResult(this.title, this.choice);
+        return new FormularResult.MultipleChoiceResult(this.id, this.choice);
     }
 
     /**
@@ -111,6 +110,12 @@ public class MultipleChoiceQuestion extends Question {
     public synchronized void cliRender() {
         if (this.form instanceof CLIFormular cliForm) {
             while (true) {
+                if (this.invalid()) {
+                    this.form.nextQuestion();
+                    this.form.render();
+                    return;
+                }
+
                 cliForm.clearOutput();
 
                 System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
