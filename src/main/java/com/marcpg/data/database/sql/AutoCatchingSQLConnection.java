@@ -64,7 +64,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             super.closeConnection();
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             super.createNewStatement();
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
         }
     }
 
@@ -90,7 +90,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.executeQuery(sql, params);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRowArray(primaryKey);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return new Object[] {};
         }
     }
@@ -110,7 +110,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRowMap(primaryKey);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return Map.of();
         }
     }
@@ -120,7 +120,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRow(primaryKey);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return null;
         }
     }
@@ -130,7 +130,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.get(primaryKey, column);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return null;
         }
     }
@@ -140,7 +140,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.get(primaryKey, column);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return null;
         }
     }
@@ -150,7 +150,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             super.set(primaryKey, column, newValue);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
         }
     }
 
@@ -159,7 +159,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             super.set(primaryKey, column, newValue);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
         }
     }
 
@@ -169,7 +169,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             super.add(values);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
         }
     }
 
@@ -178,7 +178,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             super.remove(primaryKey);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
         }
     }
 
@@ -187,7 +187,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.contains(primaryKey);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return false;
         }
     }
@@ -197,7 +197,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getAllRowArrays();
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return List.of();
         }
     }
@@ -207,7 +207,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getAllRowMaps();
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return List.of();
         }
     }
@@ -217,7 +217,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRowArraysContaining(object, checkedColumns);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return List.of();
         }
     }
@@ -227,7 +227,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRowMapsContaining(object, checkedColumns);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return List.of();
         }
     }
@@ -237,7 +237,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRowArraysMatching(wherePredicate, replacements);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return List.of();
         }
     }
@@ -247,7 +247,7 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
         try {
             return super.getRowMapsMatching(wherePredicate, replacements);
         } catch (SQLException e) {
-            this.exceptionHandling.accept(e);
+            exceptionHandling.accept(e);
             return List.of();
         }
     }

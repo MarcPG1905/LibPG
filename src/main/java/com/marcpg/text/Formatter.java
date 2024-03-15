@@ -21,7 +21,6 @@ public class Formatter {
      * @param in The {@link String string} that should be converted.
      * @return The {@link String string} but formatted to pascal case.
      *         For example, "HUMAN_LIFE" becomes "Human Life".
-     * @since 0.0.1
      */
     public static @NotNull String toPascalCase(@NotNull String in) {
         StringBuilder out = new StringBuilder();

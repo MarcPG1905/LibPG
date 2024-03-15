@@ -17,7 +17,6 @@ public class ByteData {
     /**
      * Create a {@link ByteData new ByteData} object.
      * @param bytes The {@link ByteData data} in {@link Unit#BYTE bytes}.
-     * @since 0.0.1
      */
     public ByteData(long bytes) {
         this.bytes = bytes;
@@ -27,7 +26,6 @@ public class ByteData {
      * Create a {@link ByteData new ByteData} object.
      * @param data The {@link ByteData data} value.
      * @param unit The {@link Unit unit} of the {@link ByteData time} value.
-     * @since 0.0.1
      */
     public ByteData(long data, @NotNull Unit unit) {
         this.bytes = data * unit.bytes;
@@ -40,7 +38,6 @@ public class ByteData {
      * @param format The format to use.
      * @return The {@link ByteData byte-data} as a formatted {@link String string}.
      * @see #oneUnitFormat(long, Unit.Format)
-     * @since 0.0.1
      */
     public String getOneUnitFormatted(Unit.Format format) {
         return oneUnitFormat(this, format);
@@ -53,7 +50,6 @@ public class ByteData {
      * @param format The format to use.
      * @return The {@link ByteData byte-data} as a formatted {@link String string}.
      * @see #preciselyFormat(ByteData, Unit.Format)
-     * @since 0.0.1
      */
     public String getPreciselyFormatted(Unit.Format format) {
         return preciselyFormat(this, format);
@@ -63,10 +59,9 @@ public class ByteData {
      * Get the {@link ByteData byte-data} in a specific {@link Unit unit}.
      * @param unit The {@link Unit unit} in which the {@link ByteData byte-data} should be converted.
      * @return The converted {@link ByteData byte-data}.
-     * @since 0.0.1
      */
     public long getAs(@NotNull Unit unit) {
-        return this.bytes / unit.bytes;
+        return bytes / unit.bytes;
     }
 
     /**
@@ -74,10 +69,9 @@ public class ByteData {
      * for exact precision.
      * @param unit The {@link Unit unit} in which the {@link ByteData byte-data} should be converted.
      * @return The converted {@link ByteData byte-data}.
-     * @since 0.0.1
      */
     public double getAsExact(@NotNull Unit unit) {
-        return (double) this.bytes / unit.bytes;
+        return (double) bytes / unit.bytes;
     }
 
 
@@ -88,7 +82,6 @@ public class ByteData {
      * @param b The data in {@link Unit#BYTE byte}.
      * @param format The format to use.
      * @return The formatted {@link ByteData byte-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String oneUnitFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
@@ -108,7 +101,6 @@ public class ByteData {
      * @param byteData The data.
      * @param format The format to use.
      * @return The formatted {@link ByteData byte-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String oneUnitFormat(@NotNull ByteData byteData, Unit.Format format) {
         return oneUnitFormat(byteData.bytes, format);
@@ -120,7 +112,6 @@ public class ByteData {
      * @param b The data in {@link Unit#BYTE byte}.
      * @param format The format to use.
      * @return The formatted {@link ByteData byte-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String preciselyFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
@@ -154,13 +145,10 @@ public class ByteData {
      * @param byteData The data.
      * @param format The format to use.
      * @return The formatted {@link ByteData byte-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String preciselyFormat(@NotNull ByteData byteData, Unit.Format format) {
         return preciselyFormat(byteData.bytes, format);
     }
-
-
 
     /**
      * A data unit in the <a href="https://en.wikipedia.org/wiki/Byte">Byte</a> Format,
@@ -182,27 +170,18 @@ public class ByteData {
         /** One pebibyte - 1024 tebibyte */ PEBIBYTE(1_125_899_906_842_624L, "PiB", Format.BINARY),
         /** One exbibyte - 1024 pebibyte */ EXBIBYTE(1_152_921_504_606_846_976L, "EiB", Format.BINARY);
 
-        /**
-         * The number of {@link #BYTE bytes} in one {@link Unit unit}.
-         * @since 0.0.1
-         */
+        /** The number of {@link #BYTE bytes} in one {@link Unit unit}. */
         public final long bytes;
 
-        /**
-         * The {@link Unit unit}'s abbreviation.
-         * @since 0.0.1
-         */
+        /** The {@link Unit unit}'s abbreviation. */
         public final String abb;
 
-
-        /**
-         * The unit's format
-         */
+        /** The unit's format */
         public final Format format;
 
         Unit(long bytes, String abbreviation, Format format) {
-            this.abb = abbreviation;
             this.bytes = bytes;
+            this.abb = abbreviation;
             this.format = format;
         }
 
@@ -210,28 +189,25 @@ public class ByteData {
          * The full english name of the {@link Unit unit} as listed in the english dictionary. <br>
          * Same as {@link #pluralEng()}.
          * @return The english name.
-         * @since 0.0.1
          */
         public @NotNull String eng() {
-            return this.name().toLowerCase();
+            return name().toLowerCase();
         }
 
         /**
          * Same as {@link #eng()}, but with an "s" at the end. <br>
          * @return The english name in plural.
-         * @since 0.0.1
          */
         public @NotNull String pluralEng() {
-            return this.name().toLowerCase() + "s";
+            return name().toLowerCase() + "s";
         }
 
         /**
          * Just the same as {@link #eng()} and {@link #pluralEng()}.
-         * @since 0.0.1
          */
         @Override
         public @NotNull String toString() {
-            return this.eng();
+            return eng();
         }
 
 

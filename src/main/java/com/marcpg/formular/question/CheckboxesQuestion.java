@@ -50,18 +50,18 @@ public class CheckboxesQuestion extends Question {
 
     @Override
     public void resetState() {
-        this.cursorIndex = 0;
-        this.input.replaceAll((s, v) -> false);
+        cursorIndex = 0;
+        input.replaceAll((s, v) -> false);
     }
 
     /** Moves the cursor up one choice, if it's not already all the way up. */
     public void up() {
-        if (this.cursorIndex > 0) this.cursorIndex--;
+        if (cursorIndex > 0) cursorIndex--;
     }
 
     /** Moves the cursor down one choice, if it's not already at the bottom. */
     public void down() {
-        if (this.cursorIndex < this.input.size() - 1) this.cursorIndex++;
+        if (cursorIndex < input.size() - 1) cursorIndex++;
     }
 
     /**
@@ -69,23 +69,23 @@ public class CheckboxesQuestion extends Question {
      * @param choice The choice to toggle.
      */
     public void toggle(String choice) {
-        if (!this.input.containsKey(choice))
+        if (!input.containsKey(choice))
             throw new QuestionException("Cannot toggle choice, valid choices don't contain specified choice: \"" + choice + "\"", this);
-        this.input.put(choice, !this.input.get(choice));
+        input.put(choice, !input.get(choice));
     }
 
     @Override
     public void submit() {
-        if (this.submitted)
+        if (submitted)
             throw new QuestionException("Cannot submit, the question was already submitted!", this);
 
-        this.submitted = true;
-        this.form.nextQuestion();
+        submitted = true;
+        form.nextQuestion();
     }
 
     @Override
     public String[] getInput() {
-        return this.input.entrySet().stream()
+        return input.entrySet().stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .toArray(String[]::new);
@@ -93,7 +93,7 @@ public class CheckboxesQuestion extends Question {
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.CheckboxesResult(this.id, this.input.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).toList());
+        return new FormularResult.CheckboxesResult(id, input.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).toList());
     }
 
     /**
@@ -103,36 +103,36 @@ public class CheckboxesQuestion extends Question {
      */
     @Override
     public synchronized void cliRender() {
-        if (this.form instanceof CLIFormular cliForm) {
+        if (form instanceof CLIFormular cliForm) {
             while (true) {
-                if (this.invalid()) {
-                    this.form.nextQuestion();
-                    this.form.render();
+                if (invalid()) {
+                    form.nextQuestion();
+                    form.render();
                     return;
                 }
 
                 cliForm.clearOutput();
 
-                System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
-                for (String line : Formatter.lineWrap(this.description, Math.max(50, this.title.length() * 2))) {
+                System.out.println(Ansi.formattedString("-> " + title + " <-", cliForm.ansiTheme, Ansi.BOLD));
+                for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
                     System.out.println(Ansi.formattedString("|", cliForm.ansiTheme) + " " + line);
                 }
                 System.out.println(Ansi.gray("\n|| [W]: Up || [S]: Down || [SPACE]: Toggle || [ENTER]: Submit ||\n"));
 
                 int index = 0;
-                for (Map.Entry<String, Boolean> option : this.input.entrySet()) {
-                    System.out.println("[" + (option.getValue() ? "x" : " ") + "] " + (index++ == this.cursorIndex ? "\033[30m\033[47m" : "") + option.getKey() + "\033[0m");
+                for (Map.Entry<String, Boolean> option : input.entrySet()) {
+                    System.out.println("[" + (option.getValue() ? "x" : " ") + "] " + (index++ == cursorIndex ? "\033[30m\033[47m" : "") + option.getKey() + "\033[0m");
                 }
                 try {
-                    switch (CLIFormular.NavigationButton.getButton(cliForm.input.read(true))) {
-                        case UP -> this.up();
-                        case DOWN -> this.down();
-                        case TOGGLE -> this.toggle(this.input.keySet().toArray(String[]::new)[this.cursorIndex]);
-                        case SUBMIT -> this.submit();
-                    }
-                    if (this.submitted) {
-                        this.form.render();
-                        break;
+                    switch (cliForm.input.read(true)) {
+                        case 119, 87 -> up();
+                        case 115, 83 -> down();
+                        case 32 -> toggle(input.keySet().toArray(String[]::new)[cursorIndex]);
+                        case 10, 13 -> {
+                            submit();
+                            form.render();
+                            return;
+                        }
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);

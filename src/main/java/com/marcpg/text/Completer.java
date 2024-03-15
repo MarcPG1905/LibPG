@@ -26,7 +26,6 @@ public class Completer {
      * @param suggested All things that can be suggested
      * @return A {@link List list} of filtered suggestions based on input and suggested
      * @see #startComplete(String, String[])
-     * @since 0.0.1
      */
     public static List<String> startComplete(String input, @NotNull Collection<String> suggested) {
         return suggested.stream().filter(string -> string.toLowerCase().startsWith(input.toLowerCase())).collect(Collectors.toList());
@@ -41,7 +40,6 @@ public class Completer {
      * @param suggested All things that can be suggested
      * @return A {@link List list} of filtered suggestions based on input and suggested
      * @see #startComplete(String, Collection)
-     * @since 0.0.1
      */
     public static List<String> startComplete(String input, String[] suggested) {
         return Arrays.stream(suggested).filter(string -> string.toLowerCase().startsWith(input.toLowerCase())).collect(Collectors.toList());
@@ -56,7 +54,6 @@ public class Completer {
      * @param suggested All things that can be suggested
      * @return A {@link List list} of filtered suggestions based on input and suggested
      * @see #containComplete(String, String[])
-     * @since 0.0.1
      */
     public static List<String> containComplete(String input, @NotNull Collection<String> suggested) {
         return suggested.stream().filter(string -> string.toLowerCase().contains(input.toLowerCase())).collect(Collectors.toList());
@@ -71,7 +68,6 @@ public class Completer {
      * @param suggested All things that can be suggested
      * @return A {@link List list} of filtered suggestions based on input and suggested
      * @see #containComplete(String, Collection)
-     * @since 0.0.1
      */
     public static List<String> containComplete(String input, String[] suggested) {
         return Arrays.stream(suggested).filter(string -> string.toLowerCase().contains(input.toLowerCase())).collect(Collectors.toList());

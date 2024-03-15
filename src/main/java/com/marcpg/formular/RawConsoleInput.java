@@ -31,7 +31,7 @@ import java.util.List;
 public final class RawConsoleInput {
     private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
     private final int invalidKey = 0xFFFE;
-    private final String invalidKeyStr = String.valueOf((char) this.invalidKey);
+    private final String invalidKeyStr = String.valueOf((char) invalidKey);
     private boolean initDone;
     private boolean stdinIsConsole;
     private boolean consoleModeAltered;
@@ -40,6 +40,7 @@ public final class RawConsoleInput {
      * <b>Should not be used outside of the LibPG library, as it's not tested for other use!</b><br>
      * <br>
      * Reads a character from the console without echo.
+     * If the character decimal is 3, which is ^C, it will use {@link System#exit(int)}.
      * @param wait <code>true</code> to wait until an input character is available,
      *             <code>false</code> to return immediately if no character is available.
      * @return -2 if <code>wait</code> is <code>false</code> and no character is available. -1 on EOF.
@@ -47,8 +48,13 @@ public final class RawConsoleInput {
      * @throws IOException if there was an issue while reading from the console.
      */
     public int read(boolean wait) throws IOException {
-        if (this.isWindows) return this.readWindows(wait);
-        else return this.readUnix(wait);
+        int c = isWindows ? readWindows(wait) : readUnix(wait);
+        if (c == 3 || c == 24) {
+            System.exit(0);
+            return 0;
+        } else {
+            return c;
+        }
     }
 
     /**
@@ -61,8 +67,8 @@ public final class RawConsoleInput {
      * @throws IOException if there was an issue while switching to the normal console mode.
      */
     public void resetConsoleMode() throws IOException {
-        if (this.isWindows) this.resetConsoleModeWindows();
-        else this.resetConsoleModeUnix();
+        if (isWindows) resetConsoleModeWindows();
+        else resetConsoleModeUnix();
     }
 
     private void registerShutdownHook() {
@@ -71,7 +77,7 @@ public final class RawConsoleInput {
 
     private void shutdownHook() {
         try {
-            this.resetConsoleMode();
+            resetConsoleMode();
         } catch (Exception ignored) {}
     }
 
@@ -86,51 +92,51 @@ public final class RawConsoleInput {
     private int originalConsoleMode;
 
     private int readWindows(boolean wait) throws IOException {
-        this.initWindows();
-        if (!this.stdinIsConsole) {
-            int c = this.msvcrt.getwchar();
+        initWindows();
+        if (!stdinIsConsole) {
+            int c = msvcrt.getwchar();
             if (c == 0xFFFF) c = -1;
             return c;
         }
-        this.consoleModeAltered = true;
-        this.setConsoleMode(this.consoleHandle, this.originalConsoleMode & ~Kernel32Defs.ENABLE_PROCESSED_INPUT);
+        consoleModeAltered = true;
+        setConsoleMode(consoleHandle, originalConsoleMode & ~Kernel32Defs.ENABLE_PROCESSED_INPUT);
 
-        if (!wait && this.msvcrt._kbhit() == 0) return -2;
-        return this.getwch();
+        if (!wait && msvcrt._kbhit() == 0) return -2;
+        return getwch();
     }
 
     private int getwch() {
-        int c = this.msvcrt._getwch();
+        int c = msvcrt._getwch();
         if (c == 0 || c == 0xE0) {
-            c = this.msvcrt._getwch();
+            c = msvcrt._getwch();
             if (c >= 0 && c <= 0x18FF) return 0xE000 + c;
-            return this.invalidKey;
+            return invalidKey;
         }
         if (c < 0 || c > 0xFFFF) {
-            return this.invalidKey;
+            return invalidKey;
         }
         return c;
     }
 
     private synchronized void initWindows() {
-        if (this.initDone) return;
+        if (initDone) return;
 
-        this.msvcrt = Native.load("msvcrt", Msvcrt.class);
-        this.kernel32 = Native.load("kernel32", Kernel32.class);
+        msvcrt = Native.load(Msvcrt.class);
+        kernel32 = Native.load(Kernel32.class);
         try {
-            this.consoleHandle = this.getStdInputHandle();
-            this.originalConsoleMode = this.getConsoleMode(this.consoleHandle);
-            this.stdinIsConsole = true;
+            consoleHandle = getStdInputHandle();
+            originalConsoleMode = getConsoleMode(consoleHandle);
+            stdinIsConsole = true;
         } catch (IOException e) {
-            this.stdinIsConsole = false;
+            stdinIsConsole = false;
         }
-        if (this.stdinIsConsole) this.registerShutdownHook();
+        if (stdinIsConsole) registerShutdownHook();
 
-        this.initDone = true;
+        initDone = true;
     }
 
     private Pointer getStdInputHandle() throws IOException {
-        Pointer handle = this.kernel32.GetStdHandle(Kernel32Defs.STD_INPUT_HANDLE);
+        Pointer handle = kernel32.GetStdHandle(Kernel32Defs.STD_INPUT_HANDLE);
         if (Pointer.nativeValue(handle) == 0 || Pointer.nativeValue(handle) == Kernel32Defs.INVALID_HANDLE_VALUE) {
             throw new IOException("GetStdHandle(STD_INPUT_HANDLE) failed.");
         }
@@ -139,20 +145,20 @@ public final class RawConsoleInput {
 
     private int getConsoleMode(Pointer handle) throws IOException {
         IntByReference mode = new IntByReference();
-        int rc = this.kernel32.GetConsoleMode(handle, mode);
+        int rc = kernel32.GetConsoleMode(handle, mode);
         if (rc == 0) throw new IOException("GetConsoleMode() failed.");
         return mode.getValue();
     }
 
     private void setConsoleMode(Pointer handle, int mode) throws IOException {
-        int rc = this.kernel32.SetConsoleMode(handle, mode);
+        int rc = kernel32.SetConsoleMode(handle, mode);
         if (rc == 0) throw new IOException("SetConsoleMode() failed.");
     }
 
     private void resetConsoleModeWindows() throws IOException {
-        if (!this.initDone || !this.stdinIsConsole || !this.consoleModeAltered) return;
-        this.setConsoleMode(this.consoleHandle, this.originalConsoleMode);
-        this.consoleModeAltered = false;
+        if (!initDone || !stdinIsConsole || !consoleModeAltered) return;
+        setConsoleMode(consoleHandle, originalConsoleMode);
+        consoleModeAltered = false;
     }
 
     private interface Msvcrt extends Library {
@@ -190,22 +196,22 @@ public final class RawConsoleInput {
     private Termios intermediateTermios;
 
     private int readUnix(boolean wait) throws IOException {
-        this.initUnix();
-        if (!this.stdinIsConsole) return this.readSingleCharFromByteStream();
-        this.consoleModeAltered = true;
-        this.setTerminalAttrs(this.rawTermios);
+        initUnix();
+        if (!stdinIsConsole) return readSingleCharFromByteStream();
+        consoleModeAltered = true;
+        setTerminalAttrs(rawTermios);
         try {
             if (!wait && System.in.available() == 0) return -2;
-            return this.readSingleCharFromByteStream();
+            return readSingleCharFromByteStream();
         } finally {
-            this.setTerminalAttrs(this.intermediateTermios);
+            setTerminalAttrs(intermediateTermios);
         }
     }
 
     private @NotNull Termios getTerminalAttrs() throws IOException {
         Termios termios = new Termios();
         try {
-            int rc = this.libc.tcgetattr(this.stdinFd, termios);
+            int rc = libc.tcgetattr(stdinFd, termios);
             if (rc != 0) throw new RuntimeException("tcgetattr() failed.");
         } catch (LastErrorException e) {
             throw new IOException("tcgetattr() failed.", e);
@@ -215,7 +221,7 @@ public final class RawConsoleInput {
 
     private void setTerminalAttrs(Termios termios) throws IOException {
         try {
-            int rc = this.libc.tcsetattr(this.stdinFd, LibcDefs.TCSANOW, termios);
+            int rc = libc.tcsetattr(stdinFd, LibcDefs.TCSANOW, termios);
             if (rc != 0) throw new RuntimeException("tcsetattr() failed.");
         } catch (LastErrorException e) {
             throw new IOException("tcsetattr() failed.", e);
@@ -226,46 +232,46 @@ public final class RawConsoleInput {
         byte[] inBuf = new byte[4];
         int inLen = 0;
         while (true) {
-            if (inLen >= inBuf.length) return this.invalidKey;
+            if (inLen >= inBuf.length) return invalidKey;
             int b = System.in.read();
             if (b == -1) return -1;
             inBuf[inLen++] = (byte) b;
-            int c = this.decodeCharFromBytes(inBuf, inLen);
+            int c = decodeCharFromBytes(inBuf, inLen);
             if (c != -1) return c;
         }
     }
 
     private synchronized int decodeCharFromBytes(byte[] inBytes, int inLen) {
-        this.charsetDecoder.reset();
-        this.charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE);
-        this.charsetDecoder.replaceWith(this.invalidKeyStr);
+        charsetDecoder.reset();
+        charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE);
+        charsetDecoder.replaceWith(invalidKeyStr);
         ByteBuffer in = ByteBuffer.wrap(inBytes, 0, inLen);
         CharBuffer out = CharBuffer.allocate(1);
-        this.charsetDecoder.decode(in, out, false);
+        charsetDecoder.decode(in, out, false);
         if (out.position() == 0) return -1;
         return out.get(0);
     }
 
     private synchronized void initUnix() throws IOException {
-        if (this.initDone) return;
-        this.libc = Native.load("c", Libc.class);
-        this.stdinIsConsole = this.libc.isatty(this.stdinFd) == 1;
-        this.charsetDecoder = Charset.defaultCharset().newDecoder();
-        if (this.stdinIsConsole) {
-            this.originalTermios = this.getTerminalAttrs();
-            this.rawTermios = new Termios(this.originalTermios);
-            this.rawTermios.c_lflag &= ~(LibcDefs.ICANON | LibcDefs.ECHO | LibcDefs.ECHONL | LibcDefs.ISIG);
-            this.intermediateTermios = new Termios(this.rawTermios);
-            this.intermediateTermios.c_lflag |= LibcDefs.ICANON;
-            this.registerShutdownHook();
+        if (initDone) return;
+        libc = Native.load("c", Libc.class);
+        stdinIsConsole = libc.isatty(stdinFd) == 1;
+        charsetDecoder = Charset.defaultCharset().newDecoder();
+        if (stdinIsConsole) {
+            originalTermios = getTerminalAttrs();
+            rawTermios = new Termios(originalTermios);
+            rawTermios.c_lflag &= ~(LibcDefs.ICANON | LibcDefs.ECHO | LibcDefs.ECHONL | LibcDefs.ISIG);
+            intermediateTermios = new Termios(rawTermios);
+            intermediateTermios.c_lflag |= LibcDefs.ICANON;
+            registerShutdownHook();
         }
-        this.initDone = true;
+        initDone = true;
     }
 
     private void resetConsoleModeUnix() throws IOException {
-        if (!this.initDone || !this.stdinIsConsole || !this.consoleModeAltered) return;
-        this.setTerminalAttrs(this.originalTermios);
-        this.consoleModeAltered = false;
+        if (!initDone || !stdinIsConsole || !consoleModeAltered) return;
+        setTerminalAttrs(originalTermios);
+        consoleModeAltered = false;
     }
 
     /** Internal - Should not be used outside of this class! */
@@ -296,12 +302,12 @@ public final class RawConsoleInput {
         Termios() {}
 
         Termios(@NotNull Termios t) {
-            this.c_iflag = t.c_iflag;
-            this.c_oflag = t.c_oflag;
-            this.c_cflag = t.c_cflag;
-            this.c_lflag = t.c_lflag;
-            this.c_line = t.c_line;
-            this.filler = t.filler.clone();
+            c_iflag = t.c_iflag;
+            c_oflag = t.c_oflag;
+            c_cflag = t.c_cflag;
+            c_lflag = t.c_lflag;
+            c_line = t.c_line;
+            filler = t.filler.clone();
         }
     }
 

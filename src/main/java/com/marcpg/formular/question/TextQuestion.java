@@ -48,7 +48,7 @@ public class TextQuestion extends Question {
 
     @Override
     public void resetState() {
-        this.input = new StringBuilder();
+        input = new StringBuilder();
     }
 
     /**
@@ -56,7 +56,7 @@ public class TextQuestion extends Question {
      * @return The character limit.
      */
     public int getCharacterLimit() {
-        return this.characterLimit;
+        return characterLimit;
     }
 
     /**
@@ -64,7 +64,7 @@ public class TextQuestion extends Question {
      * @param input The input.
      */
     public void setInput(CharSequence input) {
-        if (this.tooLong(input))
+        if (tooLong(input))
             throw new QuestionException("Cannot set input, input exceeds the character limit.", this);
         this.input = new StringBuilder(input);
     }
@@ -74,33 +74,33 @@ public class TextQuestion extends Question {
      * @param input The input to be submitted.
      */
     public void submit(CharSequence input) {
-        this.setInput(input);
-        this.submit();
+        setInput(input);
+        submit();
     }
 
     @Override
     public void submit() {
-        if (this.submitted)
+        if (submitted)
             throw new QuestionException("Cannot submit, the question was already submitted!", this);
-        if (this.input == null)
+        if (input == null)
             throw new QuestionException("Cannot submit, input is not set!", this);
-        if (this.input.toString().isBlank())
+        if (input.toString().isBlank())
             throw new QuestionException("Cannot submit, input is empty or blank!", this);
-        if (this.tooLong(this.input))
+        if (tooLong(input))
             throw new QuestionException("Cannot submit, input exceeds the character limit!", this);
 
-        this.submitted = true;
-        this.form.nextQuestion();
+        submitted = true;
+        form.nextQuestion();
     }
 
     @Override
     public String getInput() {
-        return this.input.toString();
+        return input.toString();
     }
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.TextResult(this.id, this.input.toString());
+        return new FormularResult.TextResult(id, input.toString());
     }
 
     /**
@@ -109,35 +109,35 @@ public class TextQuestion extends Question {
      */
     @Override
     public synchronized void cliRender() {
-        if (this.form instanceof CLIFormular cliForm) {
+        if (form instanceof CLIFormular cliForm) {
             while (true) {
-                if (this.invalid()) {
-                    this.form.nextQuestion();
-                    this.form.render();
+                if (invalid()) {
+                    form.nextQuestion();
+                    form.render();
                     return;
                 }
 
                 cliForm.clearOutput();
 
-                System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
-                for (String line : Formatter.lineWrap(this.description, Math.max(50, this.title.length() * 2))) {
+                System.out.println(Ansi.formattedString("-> " + title + " <-", cliForm.ansiTheme, Ansi.BOLD));
+                for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
                     System.out.println(Ansi.formattedString("|", cliForm.ansiTheme) + " " + line);
                 }
                 System.out.println(Ansi.gray("\n|| [ENTER]: Submit ||\n"));
 
-                System.out.print(Ansi.gray("Enter Text (" + this.input.length() + "/" + this.characterLimit + "): " + this.input));
+                System.out.print(Ansi.gray("Enter Text (" + input.length() + "/" + characterLimit + "): " + input));
                 try {
-                    int character = cliForm.input.read(true);
-                    if (character >= 32 && character <= 126 && this.input.length() < this.characterLimit) { // 32 = ' ' | 126 = '~'
-                        this.input.append((char) character);
-                    } else if ((character == 8 || character == 127) && !this.input.isEmpty()) {
-                        this.input.deleteCharAt(this.input.length() - 1);
-                    } else if (character == 22) {
-                        this.pasteFromClipboard();
-                    } else if ((character == 10 || character == 13) && !this.input.toString().isBlank()) {
-                        this.submit();
-                        this.form.render();
-                        break;
+                    int c = cliForm.input.read(true);
+                    if (c >= ' ' && c <= '~' && input.length() < characterLimit) {
+                        input.append((char) c);
+                    } else if ((c == 8 || c == 127) && !input.isEmpty()) {
+                        input.setLength(input.length() - 1);
+                    } else if (c == 22) {
+                        pasteFromClipboard();
+                    } else if ((c == 10 || c == 13) && !input.toString().isBlank()) {
+                        submit();
+                        form.render();
+                        return;
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -150,13 +150,13 @@ public class TextQuestion extends Question {
 
     private void pasteFromClipboard() {
         try {
-            this.input.append(Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor));
-            if (this.input.length() > this.characterLimit)
-                this.input.setLength(this.characterLimit);
+            input.append(Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor));
+            if (input.length() > characterLimit)
+                input.setLength(characterLimit);
         } catch (IllegalStateException | UnsupportedFlavorException | IOException ignored) {}
     }
 
     private boolean tooLong(@NotNull CharSequence str) {
-        return str.length() > this.characterLimit;
+        return str.length() > characterLimit;
     }
 }

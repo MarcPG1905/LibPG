@@ -72,7 +72,7 @@ public abstract class Formular {
      * @return The formular's title.
      */
     public final String getTitle() {
-        return this.title;
+        return title;
     }
 
     /**
@@ -91,7 +91,7 @@ public abstract class Formular {
      * @return The formular's description.
      */
     public final String getDescription() {
-        return this.description;
+        return description;
     }
 
     /**
@@ -110,7 +110,7 @@ public abstract class Formular {
      * @return The formular's color theme.
      */
     public final Color getTheme() {
-        return this.theme;
+        return theme;
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class Formular {
      * @return The formular's callback.
      */
     public final Consumer<FormularResult> getCallback() {
-        return this.callback;
+        return callback;
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class Formular {
      * @return The converted formular result..
      */
     public final @NotNull FormularResult toResult() {
-        return new FormularResult(this.questions.stream().filter(Question::isSubmitted).map(Question::toResult).toList());
+        return new FormularResult(questions.stream().filter(Question::isSubmitted).map(Question::toResult).toList());
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class Formular {
      * @return The question matching the specified ID or {@code null} otherwise.
      */
     public final @Nullable Question getQuestion(String id) {
-        for (Question question : this.questions) {
+        for (Question question : questions) {
             if (question.id.equals(id))
                 return question;
         }
@@ -168,7 +168,7 @@ public abstract class Formular {
      * @return The formular's current questions.
      */
     public final List<Question> getQuestions() {
-        return this.questions;
+        return questions;
     }
 
     /**
@@ -198,19 +198,19 @@ public abstract class Formular {
      */
     public final Formular addQuestion(@NotNull Question question) {
         question.setForm(this);
-        this.questions.add(question);
+        questions.add(question);
         return this;
     }
 
     /** Goes to the next question/page. If this is already on the last page, it will throw a {@link FormularException}*/
     public void nextQuestion() {
-        if (this.questionIndex + 1 >= this.questions.size()) {
-            this.submitted = true;
-            if (this.callback != null) {
-                this.callback.accept(this.toResult());
+        if (questionIndex + 1 >= questions.size()) {
+            submitted = true;
+            if (callback != null) {
+                callback.accept(toResult());
             }
         }
-        this.questionIndex++;
+        questionIndex++;
     }
 
     /**
@@ -219,11 +219,11 @@ public abstract class Formular {
      * @throws FormularException if this is still at the description, or the page is over the amount of questions.
      */
     public final Question currentQuestion() {
-        if (this.questionIndex == -1)
+        if (questionIndex == -1)
             throw new FormularException("Cannot get current question, still at description.", this);
-        if (this.questionIndex >= this.questions.size())
+        if (questionIndex >= questions.size())
             throw new FormularException("Cannot get current question, formular is already done.", this);
-        return this.questions.get(this.questionIndex);
+        return questions.get(questionIndex);
     }
 
     /**
@@ -233,7 +233,7 @@ public abstract class Formular {
      * @return The formular's current question/page number.
      */
     public final int getPage() {
-        return this.questionIndex;
+        return questionIndex;
     }
 
     /** Renders the current question/page. */

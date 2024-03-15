@@ -37,7 +37,7 @@ public abstract class Timer {
      * @return The time that's left.
      */
     public Time getLeft() {
-        return this.timer;
+        return timer;
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class Timer {
      * @return The time that's done.
      */
     public Time getDone() {
-        return new Time(this.initialTime.get() - this.timer.get());
+        return new Time(initialTime.get() - timer.get());
     }
 
     /**

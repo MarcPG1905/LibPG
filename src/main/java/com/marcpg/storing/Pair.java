@@ -39,11 +39,17 @@ public class Pair<L, R> {
     }
 
     /**
+     * Construct a pair.
+     * @since 0.0.8
+     */
+    public Pair() {}
+
+    /**
      * Set or change the left field of the pair.
      * @param l The new object for the left field.
      */
     public void setLeft(L l) {
-        this.left = l;
+        left = l;
     }
 
     /**
@@ -51,7 +57,7 @@ public class Pair<L, R> {
      * @return The left field
      */
     public L left() {
-        return this.left;
+        return left;
     }
 
     /**
@@ -59,7 +65,7 @@ public class Pair<L, R> {
      * @param r The new object for the right field.
      */
     public void setRight(R r) {
-        this.right = r;
+        right = r;
     }
 
     /**
@@ -67,7 +73,7 @@ public class Pair<L, R> {
      * @return The right field
      */
     public R right() {
-        return this.right;
+        return right;
     }
 
     /**
@@ -77,7 +83,7 @@ public class Pair<L, R> {
      * @return The object that's on the side.
      */
     public Object get(Side side) {
-        return side == Side.LEFT ? this.left : this.right;
+        return side == Side.LEFT ? left : right;
     }
 
     /**
@@ -94,8 +100,8 @@ public class Pair<L, R> {
      * Clears both the left and right side's values.
      */
     public void clear() {
-        this.left = null;
-        this.right = null;
+        left = null;
+        right = null;
     }
 
     /**
@@ -103,8 +109,8 @@ public class Pair<L, R> {
      * @param side The side to clear the value at.
      */
     public void clear(Side side) {
-        if (side == Side.LEFT) this.left = null;
-        else this.right = null;
+        if (side == Side.LEFT) left = null;
+        else right = null;
     }
 
     /**
@@ -113,7 +119,7 @@ public class Pair<L, R> {
      * @return If the pair is empty.
      */
     public boolean isEmpty() {
-        return this.left == null && this.right == null;
+        return left == null && right == null;
     }
 
     /**
@@ -122,7 +128,7 @@ public class Pair<L, R> {
      * @return If the pair is full.
      */
     public boolean isFull() {
-        return this.left != null && this.right != null;
+        return left != null && right != null;
     }
 
     /**
@@ -131,7 +137,7 @@ public class Pair<L, R> {
      * @return {@code true} if this pair contains the value, {@code false} otherwise.
      */
     public boolean contains(Object o) {
-        return this.left == o || this.right == o;
+        return left == o || right == o;
     }
 
     /**
@@ -140,7 +146,7 @@ public class Pair<L, R> {
      * @see #getHeavierObject()
      */
     public Side getHeavierSide() {
-        return this.left.toString().length() > this.right.toString().length() ? Side.LEFT : Side.RIGHT;
+        return left.toString().length() > right.toString().length() ? Side.LEFT : Side.RIGHT;
     }
 
     /**
@@ -149,7 +155,7 @@ public class Pair<L, R> {
      * @see #getHeavierSide()
      */
     public Object getHeavierObject() {
-        return this.get(this.getHeavierSide());
+        return get(getHeavierSide());
     }
 
     /**
@@ -158,8 +164,8 @@ public class Pair<L, R> {
      * @since 0.0.5
      */
     public void both(@NotNull Consumer<Object> operation) {
-        operation.accept(this.left);
-        operation.accept(this.right);
+        operation.accept(left);
+        operation.accept(right);
     }
 
     /**
@@ -170,8 +176,8 @@ public class Pair<L, R> {
      * @since 0.0.5
      */
     public Object getIf(@NotNull Predicate<Object> operation) {
-        if (operation.test(this.left)) return this.left;
-        if (operation.test(this.right)) return this.right;
+        if (operation.test(left)) return left;
+        if (operation.test(right)) return right;
         return null;
     }
 
@@ -182,7 +188,7 @@ public class Pair<L, R> {
      */
     @Override
     public String toString() {
-        return "{\"left\":" + this.left.toString() + ",\"right\":" + this.right.toString() + "}";
+        return "{\"left\":" + left.toString() + ",\"right\":" + right.toString() + "}";
     }
 
     /**

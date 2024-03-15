@@ -17,7 +17,7 @@ import java.nio.channels.ReadableByteChannel;
  * @since 0.0.5
  * @author MarcPG1905
  */
-public class Downloads {
+public final class Downloads {
     /**
      * The default buffer size that's used in {@link #download(URL, File)},
      * if the buffer size isn't specified.

@@ -78,17 +78,17 @@ public class Ansi {
 
     private @NotNull String get(boolean bg) {
         StringBuilder ansi = new StringBuilder("\033[");
-        if (!this.color) {
-            ansi.append(this.code);
+        if (!color) {
+            ansi.append(code);
         } else {
             ansi.append(bg ? "4" : "3");
-            if (this.rgbColor) {
+            if (rgbColor) {
                 ansi.append("8;2;")
-                        .append(this.code).append(";")
-                        .append(this.codeG).append(";")
-                        .append(this.codeB);
+                        .append(code).append(";")
+                        .append(codeG).append(";")
+                        .append(codeB);
             } else {
-                ansi.append("0;").append(this.code);
+                ansi.append("0;").append(code);
             }
         }
         return ansi.append('m').toString();
@@ -101,7 +101,7 @@ public class Ansi {
      * @since 0.0.1
      */
     public String getBackground() {
-        return this.get(true);
+        return get(true);
     }
 
     /**
@@ -110,7 +110,7 @@ public class Ansi {
      * @since 0.0.1
      */
     public String get() {
-        return this.get(false);
+        return get(false);
     }
 
     /**
@@ -120,7 +120,7 @@ public class Ansi {
      */
     @Override
     public String toString() {
-        return this.get();
+        return get();
     }
 
     /**

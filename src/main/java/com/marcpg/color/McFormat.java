@@ -76,7 +76,7 @@ public enum McFormat {
      * @since 0.0.1
      */
     public @NotNull String chatColor() {
-        return "§" + this.code;
+        return "§" + code;
     }
 
     /**
@@ -85,7 +85,7 @@ public enum McFormat {
      * @since 0.0.1
      */
     public @NotNull Color awtColor() {
-        return Color.decode("#" + this.hex);
+        return Color.decode("#" + hex);
     }
 
     /**
@@ -94,7 +94,7 @@ public enum McFormat {
      * @since 0.0.1
      */
     public @NotNull String ansi() {
-        return "\\e[0;" + this.ansiCode + "m";
+        return "\\e[0;" + ansiCode + "m";
     }
 
     /**
@@ -103,7 +103,7 @@ public enum McFormat {
      * @since 0.0.1
      */
     public @NotNull String consoleAnsi() {
-        return "\u001B[" + this.ansiCode + "m";
+        return "\u001B[" + ansiCode + "m";
     }
 
     /**
@@ -113,6 +113,6 @@ public enum McFormat {
      */
     @Override
     public @NotNull String toString() {
-        return this.chatColor();
+        return chatColor();
     }
 }

@@ -58,7 +58,7 @@ public abstract class Question {
      * @return A reference to this object.
      */
     public Question setRequirement(String questionId, Object questionValue) {
-        this.requirement = Pair.of(questionId, questionValue);
+        requirement = Pair.of(questionId, questionValue);
         return this;
     }
 
@@ -68,12 +68,12 @@ public abstract class Question {
      *         {@code false} if the question meets the set requirement.
      */
     protected final boolean invalid() {
-        if (this.requirement == null) return false;
+        if (requirement == null) return false;
 
-        Question question = this.form.getQuestion(this.requirement.left());
-        if (this.form == null || question == null)
+        Question question = form.getQuestion(requirement.left());
+        if (form == null || question == null)
             return true;
-        return question.toResult().result() != this.requirement.right();
+        return question.toResult().result() != requirement.right();
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class Question {
      * @return If the question is already submitted or not.
      */
     public final boolean isSubmitted() {
-        return this.submitted;
+        return submitted;
     }
 
     /**

@@ -135,8 +135,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an issue while closing the connection or the connection is already closed.
      */
     public void closeConnection() throws SQLException {
-        if (this.connection != null && !this.connection.isClosed()) {
-            this.connection.close();
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
         }
     }
 
@@ -145,7 +145,7 @@ public class SQLConnection<T> {
      * @return The currently used connection to the database.
      */
     public Connection connection() {
-        return this.connection;
+        return connection;
     }
 
     /**
@@ -153,7 +153,7 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while creating the new statement.
      */
     public void createNewStatement() throws SQLException {
-        this.connection.createStatement();
+        connection.createStatement();
     }
 
     /**
@@ -162,7 +162,7 @@ public class SQLConnection<T> {
      * @see #changeTable(String)
      */
     public String table() {
-        return this.table;
+        return table;
     }
 
     /**
@@ -179,7 +179,7 @@ public class SQLConnection<T> {
      * @return The table's primary key's name.
      */
     public String primaryKeyName() {
-        return this.primaryKeyName;
+        return primaryKeyName;
     }
 
     /**
@@ -193,7 +193,7 @@ public class SQLConnection<T> {
      */
     @SuppressWarnings("unchecked")
     public <T2> T2 executeQuery(String sql, Object @NotNull ... params) throws SQLException {
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 preparedStatement.setObject(i + 1, params[i]);
             }
@@ -210,11 +210,11 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public Object[] getRowArray(T primaryKey) throws SQLException {
-        String sql = "SELECT * FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, primaryKey);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next() ? this.extractRow(resultSet) : null;
+                return resultSet.next() ? extractRow(resultSet) : null;
             }
         }
     }
@@ -226,11 +226,11 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public Map<String, Object> getRowMap(T primaryKey) throws SQLException {
-        String sql = "SELECT * FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, primaryKey);
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next() ? this.extractRowAsMap(resultSet) : null;
+                return resultSet.next() ? extractRowAsMap(resultSet) : null;
             }
         }
     }
@@ -242,8 +242,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public ResultSet getRow(T primaryKey) throws SQLException {
-        String sql = "SELECT * FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, primaryKey);
             return preparedStatement.executeQuery();
         }
@@ -257,8 +257,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public Object get(T primaryKey, String column) throws SQLException {
-        String sql = "SELECT " + column + " FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        return this.executeQuery(sql, primaryKey);
+        String sql = "SELECT " + column + " FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        return executeQuery(sql, primaryKey);
     }
 
     /**
@@ -269,8 +269,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public Object get(T primaryKey, int column) throws SQLException {
-        String sql = "SELECT " + (column + 1) + " FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        return this.executeQuery(sql, primaryKey);
+        String sql = "SELECT " + (column + 1) + " FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        return executeQuery(sql, primaryKey);
     }
 
     /**
@@ -281,8 +281,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public void set(T primaryKey, String column, Object newValue) throws SQLException {
-        String sql = "UPDATE " + this.table + " SET " + column + " = ? WHERE " + this.primaryKeyName + " = ?";
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "UPDATE " + table + " SET " + column + " = ? WHERE " + primaryKeyName + " = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, newValue);
             preparedStatement.setObject(2, primaryKey);
             preparedStatement.executeUpdate();
@@ -297,8 +297,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public void set(T primaryKey, int column, Object newValue) throws SQLException {
-        String sql = "UPDATE " + this.table + " SET " + column + " = ? WHERE " + this.primaryKeyName + " = ?";
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "UPDATE " + table + " SET " + column + " = ? WHERE " + primaryKeyName + " = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, newValue);
             preparedStatement.setObject(2, primaryKey);
             preparedStatement.executeUpdate();
@@ -320,9 +320,9 @@ public class SQLConnection<T> {
         }
         placeholders.deleteCharAt(placeholders.length() - 1); // Remove trailing comma
 
-        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", this.table, String.join(",", values.keySet()), placeholders);
+        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", table, String.join(",", values.keySet()), placeholders);
 
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < params.size(); i++) {
                 preparedStatement.setObject(i + 1, params.get(i));
             }
@@ -337,8 +337,8 @@ public class SQLConnection<T> {
      *                      Can be caused by removing a non-existent row.
      */
     public void remove(T primaryKey) throws SQLException {
-        String sql = "DELETE FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "DELETE FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, primaryKey);
             preparedStatement.executeUpdate();
         }
@@ -351,8 +351,8 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public boolean contains(T primaryKey) throws SQLException {
-        String sql = "SELECT 1 FROM " + this.table + " WHERE " + this.primaryKeyName + " = ?";
-        return this.executeQuery(sql, primaryKey) != null;
+        String sql = "SELECT 1 FROM " + table + " WHERE " + primaryKeyName + " = ?";
+        return executeQuery(sql, primaryKey) != null;
     }
 
     /**
@@ -362,10 +362,10 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public List<Object[]> getAllRowArrays() throws SQLException {
-        String sql = "SELECT * FROM " + this.table;
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return this.extractRows(resultSet);
+                return extractRows(resultSet);
             }
         }
     }
@@ -378,10 +378,10 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query.
      */
     public List<Map<String, Object>> getAllRowMaps() throws SQLException {
-        String sql = "SELECT * FROM " + this.table;
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return this.extractRowsAsMaps(resultSet);
+                return extractRowsAsMaps(resultSet);
             }
         }
     }
@@ -399,13 +399,13 @@ public class SQLConnection<T> {
         String condition = Arrays.stream(checkedColumns)
                 .map(column -> column + " = ?")
                 .collect(Collectors.joining(" OR "));
-        String sql = "SELECT * FROM " + this.table + " WHERE " + condition;
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + condition;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 1; i <= checkedColumns.length; i++)
                 preparedStatement.setObject(i, object);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return this.extractRows(resultSet);
+                return extractRows(resultSet);
             }
         }
     }
@@ -424,13 +424,13 @@ public class SQLConnection<T> {
         String condition = Arrays.stream(checkedColumns)
                 .map(column -> column + " = ?")
                 .collect(Collectors.joining(" OR "));
-        String sql = "SELECT * FROM " + this.table + " WHERE " + condition;
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + condition;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 1; i <= checkedColumns.length; i++)
                 preparedStatement.setObject(i, object);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return this.extractRowsAsMaps(resultSet);
+                return extractRowsAsMaps(resultSet);
             }
         }
     }
@@ -446,13 +446,13 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query or the WHERE predicate was invalid.
      */
     public Collection<Object[]> getRowArraysMatching(String wherePredicate, Object @NotNull ... replacements) throws SQLException {
-        String sql = "SELECT * FROM " + this.table + " WHERE " + wherePredicate;
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + wherePredicate;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < replacements.length; i++)
                 preparedStatement.setObject(i + 1, replacements[i]);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return this.extractRows(resultSet);
+                return extractRows(resultSet);
             }
         }
     }
@@ -468,13 +468,13 @@ public class SQLConnection<T> {
      * @throws SQLException if there was an error while executing the query or the WHERE predicate was invalid.
      */
     public Collection<Map<String, Object>> getRowMapsMatching(String wherePredicate, Object @NotNull ... replacements) throws SQLException {
-        String sql = "SELECT * FROM " + this.table + " WHERE " + wherePredicate;
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM " + table + " WHERE " + wherePredicate;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (int i = 0; i < replacements.length; i++)
                 preparedStatement.setObject(i + 1, replacements[i]);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return this.extractRowsAsMaps(resultSet);
+                return extractRowsAsMaps(resultSet);
             }
         }
     }

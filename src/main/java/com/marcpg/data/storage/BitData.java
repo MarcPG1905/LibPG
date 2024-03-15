@@ -17,7 +17,6 @@ public class BitData {
     /**
      * Create a {@link BitData new BitData} object.
      * @param bits The {@link BitData data} in {@link Unit#BIT bits}.
-     * @since 0.0.1
      */
     public BitData(long bits) {
         this.bits = bits;
@@ -27,7 +26,6 @@ public class BitData {
      * Create a {@link BitData new BitData} object.
      * @param data The {@link BitData data} value.
      * @param unit The {@link Unit unit} of the {@link BitData time} value.
-     * @since 0.0.1
      */
     public BitData(long data, @NotNull Unit unit) {
         this.bits = data * unit.bits;
@@ -40,7 +38,6 @@ public class BitData {
      * @param format The format to use.
      * @return The {@link BitData bit-data} as a formatted {@link String string}.
      * @see #oneUnitFormat(long, Unit.Format)
-     * @since 0.0.1
      */
     public String getOneUnitFormatted(Unit.Format format) {
         return oneUnitFormat(this, format);
@@ -53,7 +50,6 @@ public class BitData {
      * @param format The format to use.
      * @return The {@link BitData bit-data} as a formatted {@link String string}.
      * @see #preciselyFormat(BitData, Unit.Format)
-     * @since 0.0.1
      */
     public String getPreciselyFormatted(Unit.Format format) {
         return preciselyFormat(this, format);
@@ -63,10 +59,9 @@ public class BitData {
      * Get the {@link BitData bit-data} in a specific {@link Unit unit}.
      * @param unit The {@link Unit unit} in which the {@link BitData bit-data} should be converted.
      * @return The converted {@link BitData bit-data}.
-     * @since 0.0.1
      */
     public long getAs(@NotNull Unit unit) {
-        return this.bits / unit.bits;
+        return bits / unit.bits;
     }
 
     /**
@@ -74,10 +69,9 @@ public class BitData {
      * for exact precision.
      * @param unit The {@link Unit unit} in which the {@link BitData bit-data} should be converted.
      * @return The converted {@link BitData bit-data}.
-     * @since 0.0.1
      */
     public double getAsExact(@NotNull Unit unit) {
-        return (double) this.bits / unit.bits;
+        return (double) bits / unit.bits;
     }
 
 
@@ -88,7 +82,6 @@ public class BitData {
      * @param b The data in {@link Unit#BIT bits}.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String oneUnitFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
@@ -108,7 +101,6 @@ public class BitData {
      * @param bitData The data.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String oneUnitFormat(@NotNull BitData bitData, Unit.Format format) {
         return oneUnitFormat(bitData.bits, format);
@@ -120,7 +112,6 @@ public class BitData {
      * @param b The data in {@link Unit#BIT bit}.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String preciselyFormat(long b, Unit.Format format) {
         Unit[] units = Unit.values();
@@ -154,13 +145,10 @@ public class BitData {
      * @param bitData The data.
      * @param format The format to use.
      * @return The formatted {@link BitData bit-data} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String preciselyFormat(@NotNull BitData bitData, Unit.Format format) {
         return preciselyFormat(bitData.bits, format);
     }
-
-
 
     /**
      * A data unit in the <a href="https://en.wikipedia.org/wiki/Bit">Bit</a> Format,
@@ -182,21 +170,13 @@ public class BitData {
         /** One pebibit - 1024 tebibit */ PEBIBYTE(1_125_899_906_842_624L, "Pibit", Format.BINARY),
         /** One exbibit - 1024 pebibit */ EXBIBYTE(1_152_921_504_606_846_976L, "Eibit", Format.BINARY);
 
-        /**
-         * The number of {@link #BIT bits} in one {@link Unit unit}.
-         * @since 0.0.1
-         */
+        /** The number of {@link #BIT bits} in one {@link Unit unit}. */
         public final long bits;
 
-        /**
-         * The {@link Unit unit}'s abbreviation.
-         * @since 0.0.1
-         */
+        /** The {@link Unit unit}'s abbreviation. */
         public final String abb;
 
-        /**
-         * The unit's format
-         */
+        /** The unit's format */
         public final Format format;
 
         Unit(long bits, String abbreviation, Format format) {
@@ -209,28 +189,25 @@ public class BitData {
          * The full english name of the {@link Unit unit} as listed in the english dictionary. <br>
          * Same as {@link #pluralEng()}.
          * @return The english name.
-         * @since 0.0.1
          */
         public @NotNull String eng() {
-            return this.name().toLowerCase();
+            return name().toLowerCase();
         }
 
         /**
-         * Same as {@link #eng()}. <br>
+         * Same as {@link #eng()}, because the plural of bit is just bit. <br>
          * @return The english name.
-         * @since 0.0.1
          */
         public @NotNull String pluralEng() {
-            return this.name().toLowerCase();
+            return name().toLowerCase();
         }
 
         /**
          * Just the same as {@link #eng()} and {@link #pluralEng()}.
-         * @since 0.0.1
          */
         @Override
         public @NotNull String toString() {
-            return this.eng();
+            return eng();
         }
 
         /** The format of data, so ^2 or ^10. */

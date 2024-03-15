@@ -19,41 +19,6 @@ import java.util.function.Consumer;
  * @author MarcPG1905
  */
 public class CLIFormular extends Formular {
-    /**
-     * Represents simple button bindings for the console-based input.
-     * Uses ASCII character decimals, that may vary between Windows and UNIX.
-     */
-    public enum NavigationButton {
-        /** w/W = Up */ UP,
-        /** s/S = Down */ DOWN,
-        /** SPACE = Toggle */ TOGGLE,
-        /** ENTER = Submit */ SUBMIT,
-        /** BS/DEL = Backspace */ BACKSPACE,
-        /** 0-9 = Numeral */ NUMERAL,
-        /** Ctrl+X/C = Exit/Cancel */ EXIT,
-        /** Anything Else */ INVALID;
-
-        /**
-         * Gets a button based on the ASCII character code.
-         * @param code The ASCII character code in the decimal format.
-         * @return The {@link NavigationButton} corresponding to the character.
-         */
-        public static NavigationButton getButton(int code) {
-            if (code >= 48 && code <= 57)
-                return NUMERAL;
-
-            return switch (code) {
-                case 119, 87 -> UP;
-                case 115, 83 -> DOWN;
-                case 32 -> TOGGLE;
-                case 10, 13 -> SUBMIT;
-                case 24, 3 -> EXIT;
-                case 8, 127 -> BACKSPACE;
-                default -> INVALID;
-            };
-        }
-    }
-
     /** The {@link RawConsoleInput} manager used for getting input. */
     public final RawConsoleInput input = new RawConsoleInput();
 
@@ -95,22 +60,22 @@ public class CLIFormular extends Formular {
      */
     @Override
     public void render() {
-        if (this.getPage() == -1) {
-            System.out.println(Ansi.formattedString("=== " + this.title + " ===", this.ansiTheme, Ansi.BOLD));
-            for (String line : Formatter.lineWrap(this.description, Math.max(50, this.title.length() * 2))) {
-                System.out.println(Ansi.formattedString("|", this.ansiTheme) + " " + line);
+        if (getPage() == -1) {
+            System.out.println(Ansi.formattedString("=== " + title + " ===", ansiTheme, Ansi.BOLD));
+            for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
+                System.out.println(Ansi.formattedString("|", ansiTheme) + " " + line);
             }
             System.out.println(Ansi.gray("\nPress any key to continue!"));
             try {
-                this.input.read(true);
+                input.read(true);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            this.nextQuestion();
-            this.render();
+            nextQuestion();
+            render();
         } else {
             try {
-                this.currentQuestion().cliRender();
+                currentQuestion().cliRender();
             } catch (FormularException ignored) {} // Let it break out of the rendering loop.
         }
     }
@@ -120,7 +85,7 @@ public class CLIFormular extends Formular {
      * @see #supportsANSI()
      */
     public void clearOutput() {
-        if (this.supportsANSI()) {
+        if (supportsANSI()) {
             System.out.print("\033[H\033[2J");
             System.out.flush();
         } else {

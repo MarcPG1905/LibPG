@@ -56,12 +56,12 @@ public class BooleanQuestion extends Question {
      * @return The question's default choice.
      */
     public boolean getDefaultChoice() {
-        return this.defaultChoice;
+        return defaultChoice;
     }
 
     @Override
     public void resetState() {
-        this.choice = this.defaultChoice;
+        choice = defaultChoice;
     }
 
     /**
@@ -69,7 +69,7 @@ public class BooleanQuestion extends Question {
      * @param choice The new choice.
      */
     public void setChoice(boolean choice) {
-        if (this.submitted)
+        if (submitted)
             throw new QuestionException("Cannot set choice, the question was already submitted!", this);
         this.choice = choice;
     }
@@ -79,27 +79,27 @@ public class BooleanQuestion extends Question {
      * @param choice The choice to be submitted.
      */
     public void submit(boolean choice) {
-        this.setChoice(choice);
-        this.submit();
+        setChoice(choice);
+        submit();
     }
 
     @Override
     public void submit() {
-        if (this.submitted)
+        if (submitted)
             throw new QuestionException("Cannot submit, the question was already submitted!", this);
 
-        this.submitted = true;
-        this.form.nextQuestion();
+        submitted = true;
+        form.nextQuestion();
     }
 
     @Override
     public Boolean getInput() {
-        return this.choice;
+        return choice;
     }
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.BooleanResult(this.id, this.choice);
+        return new FormularResult.BooleanResult(id, choice);
     }
 
     /**
@@ -108,10 +108,10 @@ public class BooleanQuestion extends Question {
      */
     @Override
     public void cliRender() {
-        if (this.form instanceof CLIFormular cliForm) {
-            if (this.invalid()) {
-                this.form.nextQuestion();
-                this.form.render();
+        if (form instanceof CLIFormular cliForm) {
+            if (invalid()) {
+                form.nextQuestion();
+                form.render();
                 return;
             }
 
@@ -125,31 +125,32 @@ public class BooleanQuestion extends Question {
             while (true) {
                 cliForm.clearOutput();
 
-                System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
-                for (String line : Formatter.lineWrap(this.description, Math.max(50, this.title.length() * 2))) {
+                System.out.println(Ansi.formattedString("-> " + title + " <-", cliForm.ansiTheme, Ansi.BOLD));
+                for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
                     System.out.println(Ansi.formattedString("|", cliForm.ansiTheme) + " " + line);
                 }
                 System.out.println(Ansi.gray("\n|| [ENTER]: Submit ||\n"));
 
                 if (error) {
                     System.out.println(Ansi.red("Invalid Input! Try again:"));
+                    error = false;
                 }
 
-                System.out.print("Choice [" + (this.defaultChoice ? "Y|n" : "y|N") + "]: ");
+                System.out.print("Choice [" + (defaultChoice ? "Y|n" : "y|N") + "]: ");
 
                 String input = new Scanner(System.in).nextLine();
                 if (input.isBlank()) {
-                    this.submit(this.defaultChoice);
+                    submit(defaultChoice);
                 } else if (FALSE_LETTERS.contains(input.charAt(0))) {
-                    this.submit(false);
+                    submit(false);
                 } else if (TRUE_LETTERS.contains(input.charAt(0))) {
-                    this.submit(true);
+                    submit(true);
                 } else {
                     error = true;
                 }
-                if (this.submitted) {
-                    this.form.render();
-                    break;
+                if (submitted) {
+                    form.render();
+                    return;
                 }
             }
         } else {

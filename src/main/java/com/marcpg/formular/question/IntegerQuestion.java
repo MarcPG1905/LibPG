@@ -61,8 +61,8 @@ public class IntegerQuestion extends Question {
 
     @Override
     public void resetState() {
-        this.negative = false;
-        this.input = 0;
+        negative = false;
+        input = 0;
     }
 
     /**
@@ -70,11 +70,11 @@ public class IntegerQuestion extends Question {
      * @param number The new input.
      */
     public void setInput(int number) {
-        if (!this.inBounds(number))
-            throw new QuestionException("Cannot set input, input is not in set bounds (" + this.min + "-" + this.max + ").", this);
+        if (!inBounds(number))
+            throw new QuestionException("Cannot set input, input is not in set bounds (" + min + "-" + max + ").", this);
 
-        this.negative = number < 0;
-        this.input = this.negative ? -number : number;
+        negative = number < 0;
+        input = negative ? -number : number;
     }
 
     /**
@@ -82,29 +82,29 @@ public class IntegerQuestion extends Question {
      * @param number The input to be submitted.
      */
     public void submit(int number) {
-        this.setInput(number);
-        this.submit();
+        setInput(number);
+        submit();
     }
 
     @Override
     public void submit() {
-        if (this.submitted)
+        if (submitted)
             throw new QuestionException("Cannot submit, the question was already submitted!", this);
-        if (!this.inBounds(this.negative ? -this.input : this.input))
-            throw new QuestionException("Cannot submit, input is not in set bounds (" + this.min + "-" + this.max + ").", this);
+        if (!inBounds(negative ? -input : input))
+            throw new QuestionException("Cannot submit, input is not in set bounds (" + min + "-" + max + ").", this);
 
-        this.submitted = true;
-        this.form.nextQuestion();
+        submitted = true;
+        form.nextQuestion();
     }
 
     @Override
     public Long getInput() {
-        return this.negative ? -Math.abs(this.input) : this.input;
+        return negative ? -Math.abs(input) : input;
     }
 
     @Override
     public FormularResult.Result toResult() {
-        return new FormularResult.IntegerResult(this.id, this.negative ? -this.input : this.input);
+        return new FormularResult.IntegerResult(id, negative ? -input : input);
     }
 
     /**
@@ -113,51 +113,46 @@ public class IntegerQuestion extends Question {
      */
     @Override
     public synchronized void cliRender() {
-        if (this.form instanceof CLIFormular cliForm) {
+        if (form instanceof CLIFormular cliForm) {
             while (true) {
-                if (this.invalid()) {
-                    this.form.nextQuestion();
-                    this.form.render();
+                if (invalid()) {
+                    form.nextQuestion();
+                    form.render();
                     return;
                 }
 
                 cliForm.clearOutput();
 
-                System.out.println(Ansi.formattedString("-> " + this.title + " <-", cliForm.ansiTheme, Ansi.BOLD));
-                for (String line : Formatter.lineWrap(this.description, Math.max(50, this.title.length() * 2))) {
+                System.out.println(Ansi.formattedString("-> " + title + " <-", cliForm.ansiTheme, Ansi.BOLD));
+                for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
                     System.out.println(Ansi.formattedString("|", cliForm.ansiTheme) + " " + line);
                 }
                 System.out.println(Ansi.gray("\n|| [ENTER]: Submit ||\n"));
 
                 System.out.print(Ansi.gray("Enter a number" +
-                        (this.min == Long.MIN_VALUE ? "" : " from " + this.min) +
-                        (this.max == Long.MAX_VALUE ? "" : " to " + this.max) +
-                        ": " + (this.inBounds(this.negative ? -this.input : this.input) ? "" : Ansi.RED) + (this.negative ? "-" : " ") + this.input + (this.inBounds(this.negative ? -this.input : this.input) ? "" : Ansi.RESET)));
+                        (min == Long.MIN_VALUE ? "" : " from " + min) +
+                        (max == Long.MAX_VALUE ? "" : " to " + max) +
+                        ": " + (inBounds(negative ? -input : input) ? "" : Ansi.RED) + (negative ? "-" : " ") + input + (inBounds(negative ? -input : input) ? "" : Ansi.RESET)));
+
                 try {
-                    int number = cliForm.input.read(true);
-                    if (number >= 48 && number <= 57) {
+                    int c = cliForm.input.read(true);
+                    if (c >= '0' && c <= '9') {
                         try {
-                            this.input = Long.parseLong(this.input + "" + (number - 48));
+                            input = Long.parseLong(input + "" + (char) c);
                         } catch (NumberFormatException e) {
-                            this.input = Long.MAX_VALUE;
+                            input = max;
                         }
-                    } else if (number == 45 && this.input == 0) {
-                        this.negative = true;
-                    } else if ((number == 8 || number == 127)) {
-                        if (this.input == 0) {
-                            this.negative = false;
-                        } else {
-                            String s = String.valueOf(this.input);
-                            if (s.length() == 1) {
-                                this.input = 0;
-                            } else {
-                                this.input = Long.parseLong(s.substring(0, s.length() - 1));
-                            }
-                        }
-                    } else if ((number == 10 || number == 13) && this.inBounds(this.negative ? -this.input : this.input)) {
-                        this.submit();
-                        this.form.render();
-                        break;
+                    } else if (c == '-') {
+                        negative = true;
+                    } else if (c == 8 || c == 127) {
+                        if (input == 0)
+                            negative = false;
+                        else
+                            input = Math.round((double) (input - 5) / 10);
+                    } else if ((c == 10 || c == 13) && inBounds(negative ? -input : input)) {
+                        submit();
+                        form.render();
+                        return;
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -169,6 +164,6 @@ public class IntegerQuestion extends Question {
     }
 
     private boolean inBounds(long number) {
-        return this.input <= this.max && this.input >= this.min;
+        return number <= max && number >= min;
     }
 }

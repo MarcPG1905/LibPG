@@ -15,7 +15,7 @@ import java.util.List;
  * @since 0.0.4
  * @author MarcPG1905
  */
-public class Webhook {
+public final class Webhook {
     private URL url;
 
     /**
@@ -33,7 +33,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int postRaw(String messageJson) throws IOException {
-        HttpURLConnection connection = createConnection(this.url);
+        HttpURLConnection connection = createConnection(url);
         try (DataOutputStream out = new DataOutputStream(connection.getOutputStream())) {
             out.writeBytes(messageJson);
             out.flush();
@@ -48,7 +48,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(@NotNull Message message) throws IOException {
-        return this.postRaw(message.build());
+        return postRaw(message.build());
     }
 
     /**
@@ -58,7 +58,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(String content) throws IOException {
-        return this.postRaw(new Message(content, false).build());
+        return postRaw(new Message(content, false).build());
     }
 
     /**
@@ -68,7 +68,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(Embed... embeds) throws IOException {
-        return this.postRaw(new Message(null, List.of(embeds), false).build());
+        return postRaw(new Message(null, List.of(embeds), false).build());
     }
 
     /**
@@ -78,7 +78,7 @@ public class Webhook {
      * @throws IOException if there was an error while posting the message.
      */
     public int post(List<Embed> embeds) throws IOException {
-        return this.postRaw(new Message(null, embeds, false).build());
+        return postRaw(new Message(null, embeds, false).build());
     }
 
     /**
@@ -86,7 +86,7 @@ public class Webhook {
      * @return The Discord webhook URL that's posted to.
      */
     public URL getUrl() {
-        return this.url;
+        return url;
     }
 
     /**

@@ -17,7 +17,6 @@ public class Time {
     /**
      * Create a {@link Time new Time} object.
      * @param seconds The {@link Time time} in {@link Unit#SECONDS seconds}.
-     * @since 0.0.1
      */
     public Time(long seconds) {
         this.seconds = seconds;
@@ -27,7 +26,6 @@ public class Time {
      * Create a {@link Time new Time} object.
      * @param time The {@link Time time} value.
      * @param unit The {@link Unit unit} of the {@link Time time} value.
-     * @since 0.0.1
      */
     public Time(long time, @NotNull Unit unit) {
         this.seconds = time * unit.sec;
@@ -38,7 +36,6 @@ public class Time {
      * The formatted {@link Time time} uses the highest {@link Unit} possible for the best readability.
      * @return The {@link Time time} as a formatted {@link String string}.
      * @see #oneUnitFormat(long)
-     * @since 0.0.1
      */
     public String getOneUnitFormatted() {
         return oneUnitFormat(this);
@@ -49,7 +46,6 @@ public class Time {
      * The formatted {@link Time time} uses the highest {@link Unit} possible and then lower ones for remaining time.
      * @return The {@link Time time} as a formatted {@link String string}.
      * @see #preciselyFormat(Time)
-     * @since 0.0.1
      */
     public String getPreciselyFormatted() {
         return preciselyFormat(this);
@@ -62,43 +58,39 @@ public class Time {
      * @since 0.0.2
      */
     public long get() {
-        return this.seconds;
+        return seconds;
     }
 
     /**
      * Get the {@link Time time} in a specific {@link Unit unit}.
      * @param unit The {@link Unit unit} in which the {@link Time time} should be converted.
      * @return The converted {@link Time time}.
-     * @since 0.0.1
      */
     public long getAs(@NotNull Unit unit) {
-        return this.seconds / unit.sec;
+        return seconds / unit.sec;
     }
 
     /**
      * Get the {@link Time time} in a specific {@link Unit unit} as a {@link Double double} for exact precision.
      * @param unit The {@link Unit unit} in which the {@link Time time} should be converted.
      * @return The converted {@link Time time}.
-     * @since 0.0.1
      */
     public double getAsExact(@NotNull Unit unit) {
-        return (double) this.seconds / unit.sec;
+        return (double) seconds / unit.sec;
     }
 
     /**
      * Increment the {@link Time time}, useful if used in {@link Timer timers}.
      * @param time The {@link Time time} in the {@link Unit unit} of the second parameter.
      * @param unit The {@link Unit unit} of the {@link Time time}.
-     * @since 0.0.1
      */
     public void increment(long time, @NotNull Unit unit) {
-        this.seconds += time * unit.sec;
+        seconds += time * unit.sec;
     }
 
     /**
      * Increment the {@link Time time}, useful if used in {@link Timer timers}.
-     * @param seconds The {@link Time time} in {@link Unit#SECONDS seconds}
-     * @since 0.0.1
+     * @param seconds The {@link Time time} in {@link Unit#SECONDS seconds}.
      */
     public void increment(long seconds) {
         this.seconds += seconds;
@@ -107,40 +99,36 @@ public class Time {
     /**
      * Increment the {@link Time time}, useful if used in {@link Timer timers}. <br>
      * This increments the {@link Time time} by 1 {@link Unit#SECONDS second}.
-     * @since 0.0.1
      */
     public void increment() {
-        this.seconds++;
+        seconds++;
     }
 
     /**
      * Decrement the {@link Time time}, useful if used in {@link Timer timers}/countdowns.
      * @param time The {@link Time time} in the {@link Unit unit} of the second parameter.
      * @param unit The {@link Unit unit} of the {@link Time time}.
-     * @since 0.0.1
      */
     public void decrement(long time, @NotNull Unit unit) {
-        this.decrement(time * unit.sec);
+        decrement(time * unit.sec);
     }
 
     /**
      * Decrement the {@link Time time}, useful if used in {@link Timer timers}/countdowns.
      * @param seconds The {@link Time time} in {@link Unit#SECONDS seconds}
-     * @since 0.0.1
      */
     public void decrement(long seconds) {
         this.seconds -= seconds;
-        if (!this.allowNegatives && this.seconds < 0) this.seconds = 0;
+        if (!allowNegatives && this.seconds < 0) this.seconds = 0;
     }
 
     /**
      * Decrement the {@link Time time}, useful if used in {@link Timer timers}/countdowns. <br>
      * This decrements the {@link Time time} by 1 {@link Unit#SECONDS second}.
-     * @since 0.0.1
      */
     public void decrement() {
-        this.seconds--;
-        if (!this.allowNegatives && this.seconds < 0) this.seconds = 0;
+        seconds--;
+        if (!allowNegatives && seconds < 0) seconds = 0;
     }
 
     /**
@@ -156,7 +144,6 @@ public class Time {
      * Format the {@link Time time} as a {@link String string} representation using the highest possible {@link Unit unit}.
      * @param s The time in {@link Unit#SECONDS seconds}.
      * @return The formatted {@link Time time} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String oneUnitFormat(long s) {
         Unit[] units = Unit.values();
@@ -173,7 +160,6 @@ public class Time {
      * Format the {@link Time time} as a {@link String string} representation using the highest possible {@link Unit unit}.
      * @param time The time.
      * @return The formatted {@link Time time} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String oneUnitFormat(@NotNull Time time) {
         return oneUnitFormat(time.seconds);
@@ -183,7 +169,6 @@ public class Time {
      * Format the {@link Time time} as a {@link String string} representation using the highest possible {@link Unit unit} and then lower ones for remaining time.
      * @param s The time in {@link Unit#SECONDS seconds}.
      * @return The formatted {@link Time time} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String preciselyFormat(long s) {
         Unit[] units = Unit.values();
@@ -215,7 +200,6 @@ public class Time {
      * Format the {@link Time time} as a {@link String string} representation using the highest possible {@link Unit unit} and then lower ones for remaining time.
      * @param time The time.
      * @return The formatted {@link Time time} {@link String string}.
-     * @since 0.0.1
      */
     public static @NotNull String preciselyFormat(@NotNull Time time) {
         return preciselyFormat(time.seconds);
@@ -270,16 +254,10 @@ public class Time {
         /** One decade - 10 years */ DECADES(315576000L, "dec"),
         /** One century - 100 years / 10 decades */ CENTURIES(3155760000L, "cent");
 
-        /**
-         * The number of {@link #SECONDS seconds} in one {@link Unit unit}. (source: <a href="https://en.wikipedia.org/wiki/Unit_of_time">Wikipedia/Unit of time</a>)
-         * @since 0.0.1
-         */
+        /**The number of {@link #SECONDS seconds} in one {@link Unit unit}. (source: <a href="https://en.wikipedia.org/wiki/Unit_of_time">Wikipedia/Unit of time</a>) */
         public final long sec;
 
-        /**
-         * The {@link Unit unit}'s abbreviation.
-         * @since 0.0.1
-         */
+        /** The {@link Unit unit}'s abbreviation. */
         public final String abb;
 
         Unit(long seconds, String abbreviation) {
@@ -291,10 +269,9 @@ public class Time {
          * Get {@link #pluralEng()} but as singular. <br>
          * The full english name of the {@link Unit unit} as listed in the english dictionary.
          * @return The english name.
-         * @since 0.0.1
          */
         public @NotNull String eng() {
-            return this.pluralEng().substring(0, this.name().length() - 1).replace("ies", "y");
+            return pluralEng().substring(0, name().length() - 1).replace("ies", "y");
         }
 
         /**
@@ -304,7 +281,7 @@ public class Time {
          * @since 0.0.1
          */
         public @NotNull String pluralEng() {
-            return this.name().toLowerCase();
+            return name().toLowerCase();
         }
 
         /**
@@ -313,7 +290,7 @@ public class Time {
          */
         @Override
         public @NotNull String toString() {
-            return this.eng();
+            return eng();
         }
     }
 }

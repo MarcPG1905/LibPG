@@ -35,7 +35,7 @@ public class FormularResult {
      * @return A reference to this object.
      */
     public FormularResult addResult(Result result) {
-        this.results.add(result);
+        results.add(result);
         return this;
     }
 
@@ -45,7 +45,7 @@ public class FormularResult {
      * @return A reference to this object.
      */
     public FormularResult removeResult(Result result) {
-        this.results.remove(result);
+        results.remove(result);
         return this;
     }
 
@@ -54,7 +54,7 @@ public class FormularResult {
      * @return A reference to this object.
      */
     public FormularResult clearResults() {
-        this.results.clear();
+        results.clear();
         return this;
     }
 
@@ -63,7 +63,7 @@ public class FormularResult {
      * @return The converted iterator.
      */
     public Iterator<Result> toIterator() {
-        return this.results.iterator();
+        return results.iterator();
     }
 
     /**
@@ -92,7 +92,7 @@ public class FormularResult {
     public record TextResult(String id, String text) implements Result {
         @Override
         public String result() {
-            return this.text;
+            return text;
         }
     }
 
@@ -104,7 +104,7 @@ public class FormularResult {
     public record IntegerResult(String id, long value) implements Result {
         @Override
         public Long result() {
-            return this.value;
+            return value;
         }
     }
 
@@ -116,7 +116,7 @@ public class FormularResult {
     public record BooleanResult(String id, boolean value) implements Result {
         @Override
         public Boolean result() {
-            return this.value;
+            return value;
         }
     }
 
@@ -128,7 +128,7 @@ public class FormularResult {
     public record MultipleChoiceResult(String id, String value) implements Result {
         @Override
         public String result() {
-            return this.value;
+            return value;
         }
     }
 
@@ -140,7 +140,7 @@ public class FormularResult {
     public record CheckboxesResult(String id, List<String> chosen) implements Result {
         @Override
         public List<String> result() {
-            return this.chosen;
+            return chosen;
         }
     }
 }
