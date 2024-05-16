@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Represents a simple formular, similar to your everyday formulars, like Google Forms, but in Java.
+ * Represents a simple formular, similar to your everyday formulars, like Google Forms, but in Java. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see CLIFormular
  * @since 0.0.8
  * @author MarcPG1905

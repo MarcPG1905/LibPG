@@ -7,7 +7,8 @@ import java.util.List;
 
 /**
  * Represents a fully filled out formular's result with all values.
- * Also provides records for the different question type's answers.
+ * Also provides records for the different question type's answers. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @since 0.0.8
  * @author MarcPG1905
  */

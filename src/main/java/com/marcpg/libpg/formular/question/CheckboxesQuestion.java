@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * A question with multiple choices, that can each be checked or unchecked. Supports multiple checked choices.
+ * A question with multiple choices, that can each be checked or unchecked. Supports multiple checked choices. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see Question
  * @see MultipleChoiceQuestion
  * @since 0.0.8

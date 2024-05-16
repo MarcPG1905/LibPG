@@ -9,7 +9,8 @@ import org.intellij.lang.annotations.Pattern;
 import java.io.IOException;
 
 /**
- * A question with a number, that can be negative and supports minimum and maximum values.
+ * A question with a number, that can be negative and supports minimum and maximum values. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see Question
  * @since 0.0.8
  * @author MarcPG1905

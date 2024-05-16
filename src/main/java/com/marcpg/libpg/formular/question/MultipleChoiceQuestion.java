@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A question with multiple choices. Only one choice can be checked.
+ * A question with multiple choices. Only one choice can be checked. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see Question
  * @see CheckboxesQuestion
  * @since 0.0.8

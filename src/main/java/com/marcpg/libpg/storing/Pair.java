@@ -2,6 +2,7 @@ package com.marcpg.libpg.storing;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -15,13 +16,13 @@ import java.util.function.Predicate;
  */
 public class Pair<L, R> {
     /**
-     * A side of a pair
+     * A side of a pair.
      * @since 0.0.1
      * @author MarcPG1905
      */
     public enum Side {
-        /** The right side of a {@link Pair} */ RIGHT,
-        /** The left side of a {@link Pair} */ LEFT
+        /** The right side of a {@link Pair}. */ RIGHT,
+        /** The left side of a {@link Pair}. */ LEFT
     }
 
     private L left;
@@ -54,7 +55,7 @@ public class Pair<L, R> {
 
     /**
      * Get the left field of the pair.
-     * @return The left field
+     * @return The left field.
      */
     public L left() {
         return left;
@@ -70,7 +71,7 @@ public class Pair<L, R> {
 
     /**
      * Get the right field of the pair.
-     * @return The right field
+     * @return The right field.
      */
     public R right() {
         return right;
@@ -202,5 +203,17 @@ public class Pair<L, R> {
      */
     public static <L, R> @NotNull Pair<L, R> of(L left, R right) {
         return new Pair<>(left, right);
+    }
+
+    /**
+     * Static method to convert a {@link java.util.Map.Entry Map.Entry} to a Pair, where the left side is
+     * the key and the right side is the value.
+     * @param entry The Map.Entry to convert to a Pair.
+     * @param <L> The left value's, so map-entry's key, type.
+     * @param <R> The right value's, so map-entry's value, type.
+     * @return A new Pair instance with the same objects as the Entry.
+     */
+    public static <L, R> @NotNull Pair<L, R> ofEntry(@NotNull Map.Entry<L, R> entry) {
+        return new Pair<>(entry.getKey(), entry.getValue());
     }
 }

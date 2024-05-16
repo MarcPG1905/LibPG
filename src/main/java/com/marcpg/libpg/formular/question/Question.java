@@ -1,13 +1,14 @@
 package com.marcpg.libpg.formular.question;
 
+import com.marcpg.libpg.formular.CLIFormular;
 import com.marcpg.libpg.formular.Formular;
 import com.marcpg.libpg.formular.FormularResult;
-import com.marcpg.libpg.formular.CLIFormular;
 import com.marcpg.libpg.storing.Pair;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a formular's question, with title, description, input and rendering.
+ * Represents a formular's question, with title, description, input and rendering. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @since 0.0.8
  * @author MarcPG1905
  */

@@ -13,7 +13,8 @@ import java.util.function.Consumer;
 
 /**
  * Represents a CLI (Command Line Interface) {@link Formular}, that can be displayed inside of consoles. <br>
- * The console needs to support ANSI formatting and needs to run on Windows or any UNIX system.
+ * The console needs to support ANSI formatting and needs to run on Windows or any UNIX system. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see Formular
  * @since 0.0.8
  * @author MarcPG1905

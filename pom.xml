@@ -6,7 +6,7 @@
 
     <groupId>com.marcpg</groupId>
     <artifactId>libpg</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 
     <properties>
         <java.version>17</java.version>
@@ -30,6 +30,7 @@
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
             <version>5.14.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

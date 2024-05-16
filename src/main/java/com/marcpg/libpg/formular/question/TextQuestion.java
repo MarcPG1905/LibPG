@@ -13,7 +13,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
 /**
- * A question with text, that supports any characters between ASCII 32 (' ') and 126 ('~').
+ * A question with text, that supports any characters between ASCII 32 (' ') and 126 ('~'). <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see Question
  * @see IntegerQuestion
  * @since 0.0.8

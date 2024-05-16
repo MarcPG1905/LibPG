@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * <strong>Note that this will require you to manually implement the JNA dependency (>5.14.0)!</strong> <br>
  * <b>Should not be used outside of the LibPG library, as it's not tested for other use!</b><br>
  * <br>
  * All credits for this code go to <a href="http://www.source-code.biz/snippets/java/RawConsoleInput">source-code.biz</a>!

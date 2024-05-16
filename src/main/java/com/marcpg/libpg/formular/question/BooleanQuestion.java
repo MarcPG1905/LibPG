@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * A question with either true or false, with advanced input supporting multiple languages, based on starting letters.
+ * A question with either true or false, with advanced input supporting multiple languages, based on starting letters. <br>
+ * <strong>Note that most features will require you to manually implement the JNA dependency (>5.14.0)!</strong>
  * @see Question
  * @since 0.0.8
  * @author MarcPG1905
