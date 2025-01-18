@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 /**
  * A pair is just two values that have a defined type.
- * It's the same as a {@link java.util.Map}, but with only one value.
+ * It's the same as a {@link java.util.Map.Entry}, but class-based and focused on accessibility.
  * @param <L> The left field's type
  * @param <R> The right field's type
  * @since 0.0.1
@@ -16,17 +16,20 @@ import java.util.function.Predicate;
  */
 public class Pair<L, R> {
     /**
-     * A side of a pair.
+     * A side of a value in a pair.
      * @since 0.0.1
      * @author MarcPG1905
      */
     public enum Side {
-        /** The right side of a {@link Pair}. */ RIGHT,
-        /** The left side of a {@link Pair}. */ LEFT
+        /** The left side of a {@link Pair}. */ LEFT,
+        /** The right side of a {@link Pair}. */ RIGHT
     }
 
-    private L left;
-    private R right;
+    /** The left side of this pair. */
+    protected L left;
+
+    /** The right side of this pair. */
+    protected R right;
 
     /**
      * Construct a pair with both sides already initialized.
@@ -79,11 +82,11 @@ public class Pair<L, R> {
 
     /**
      * Get the field of a specific side from the pair.
-     * Not recommend, use {@link #left()} and {@link #right()} instead.
-     * @param side What side of the pair you want to get.
+     * Not recommended, use {@link #left()} and {@link #right()} instead.
+     * @param side The side of the pair to retrieve.
      * @return The object that's on the side.
      */
-    public Object get(Side side) {
+    public Object get(@NotNull Side side) {
         return side == Side.LEFT ? left : right;
     }
 
