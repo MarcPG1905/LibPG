@@ -14,11 +14,11 @@ public abstract class Timer {
 
     /**
      * Creates a new Timer object with a specified starting time.
-     * @param time The starting time.
+     * @param time The starting time. Will be cloned for internal use.
      */
     public Timer(Time time) {
-        this.timer = time;
-        this.initialTime = time;
+        this.timer = new Time(time);
+        this.initialTime = new Time(time);
     }
 
     /**

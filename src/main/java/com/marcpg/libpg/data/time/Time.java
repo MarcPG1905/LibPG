@@ -23,6 +23,15 @@ public class Time {
     }
 
     /**
+     * Clones a {@link Time} object.
+     * @param time The time to clone.
+     */
+    public Time(@NotNull Time time) {
+        this.seconds = time.seconds;
+        this.allowNegatives = time.allowNegatives;
+    }
+
+    /**
      * Create a {@link Time new Time} object.
      * @param time The {@link Time time} value.
      * @param unit The {@link Unit unit} of the {@link Time time} value.
@@ -140,6 +149,19 @@ public class Time {
         this.allowNegatives = allowNegatives;
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Time time)) return false;
+
+        return seconds == time.seconds && allowNegatives == time.allowNegatives;
+    }
+
+    @Override
+    public String toString() {
+        return "Time [seconds=" + seconds + ", allowNegatives=" + allowNegatives + "]";
+    }
+
     /**
      * Format the {@link Time time} as a {@link String string} representation using the highest possible {@link Unit unit}.
      * @param s The time in {@link Unit#SECONDS seconds}.
@@ -228,7 +250,8 @@ public class Time {
 
         if (text != null && number != null) {
             for (Time.Unit unit : Time.Unit.values()) {
-                if (text.startsWith(unit.abb)) {
+                String t = text.toLowerCase();
+                if (t.startsWith(unit.abb) || unit.name().toLowerCase().startsWith(t)) {
                     return new Time(Integer.parseInt(number), unit);
                 }
             }
@@ -246,7 +269,7 @@ public class Time {
     public enum Unit {
         /** One second - 1000 milliseconds */ SECONDS(1L, "s"),
         /** One minute - 60 seconds */ MINUTES(60L, "min"),
-        /** One hour - 60 minutes / 3600 seconds */ HOURS(3600L, "hr"),
+        /** One hour - 60 minutes / 3600 seconds */ HOURS(3600L, "h"),
         /** One day - 24 hours */ DAYS(86400L, "d"),
         /** One week - 7 days */ WEEKS(604800L, "wk"),
         /** One month - ~4.34 weeks */ MONTHS(2629800L, "mo"),
