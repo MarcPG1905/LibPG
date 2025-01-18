@@ -1,7 +1,9 @@
 package com.marcpg.libpg.data.database.sql;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -15,6 +17,7 @@ import java.util.function.Consumer;
  * methods, using a code snipped provided in the constructor or optionally modified
  * using {@link #changeExceptionHandling(Consumer)}. Can break if the code if the
  * way of handling the exceptions is invalid.
+ * @param <T> The primary key's type.
  * @since 0.0.6
  * @author MarcPG1905
  */
@@ -57,6 +60,16 @@ public class AutoCatchingSQLConnection<T> extends SQLConnection<T> {
     public AutoCatchingSQLConnection(DatabaseType type, String ip, int port, String databaseName, String username, String password, String table, String primaryKeyName, Consumer<SQLException> exceptionHandling) throws SQLException, ClassNotFoundException {
         super(type, ip, port, databaseName, username, password, table, primaryKeyName);
         this.exceptionHandling = exceptionHandling;
+    }
+
+    /**
+     * This is package private, because it's only supposed to work as the backbone of {@link DummySQLConnection}.
+     * @param connection The connection to the database, can be {@code null} for dummy connections.
+     * @param table The table in the database that will accessed. Can be changed later on using {@link #changeTable(String)}.
+     * @param primaryKeyName The primary key's name.
+     */
+    AutoCatchingSQLConnection(@Nullable Connection connection, String table, String primaryKeyName) {
+        super(connection, table, primaryKeyName);
     }
 
     @Override

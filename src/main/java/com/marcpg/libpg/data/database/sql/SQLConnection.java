@@ -1,6 +1,7 @@
 package com.marcpg.libpg.data.database.sql;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
@@ -130,6 +131,18 @@ public class SQLConnection<T> {
     }
 
     /**
+     * This is package private, because it's only supposed to work as the backbone of {@link DummySQLConnection}.
+     * @param connection The connection to the database, can be {@code null} for dummy connections.
+     * @param table The table in the database that will accessed. Can be changed later on using {@link #changeTable(String)}.
+     * @param primaryKeyName The primary key's name.
+     */
+    SQLConnection(@Nullable Connection connection, String table, String primaryKeyName) {
+        this.connection = connection;
+        this.table = table;
+        this.primaryKeyName = primaryKeyName;
+    }
+
+    /**
      * Closes the connection to the database. Recommended to use this before shutting
      * down the program, to not cause any connection issues with the database.
      * @throws SQLException if there was an issue while closing the connection or the connection is already closed.
@@ -204,6 +217,23 @@ public class SQLConnection<T> {
     }
 
     /**
+     * Executes a parameterized SQL query and returns the result, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param sql The parameterized query to be executed.
+     * @param params The parameters that should be set into the sql query input.
+     * @param <T2> The type of the result to be returned.
+     * @return The result of the query execution, or the default if it's empty.
+     * @see #executeQuery(String, Object...)
+     */
+    public <T2> @NotNull T2 executeQuery(T2 def, String sql, Object @NotNull ... params) {
+        try {
+            return Objects.requireNonNull(executeQuery(sql, params));
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
+    }
+
+    /**
      * Get a whole row from the table based on the primary key.
      * @param primaryKey The primary key to get the row from.
      * @return All {@link Object objects} of the row as an {@link Array array}.
@@ -216,6 +246,21 @@ public class SQLConnection<T> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next() ? extractRow(resultSet) : null;
             }
+        }
+    }
+
+    /**
+     * Get a whole row from the table based on the primary key, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param primaryKey The primary key to get the row from.
+     * @return All {@link Object objects} of the row as an {@link Array array}.
+     * @see #getRowArray(Object)
+     */
+    public @NotNull Object[] getRowArray(T primaryKey, @NotNull Object[] def) {
+        try {
+            return Objects.requireNonNull(getRowArray(primaryKey));
+        } catch (SQLException | NullPointerException e) {
+            return def;
         }
     }
 
@@ -236,6 +281,21 @@ public class SQLConnection<T> {
     }
 
     /**
+     * Get a whole row with column names and values from the table based on the primary key, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param primaryKey The primary key to get the row from.
+     * @return All {@link Object objects} of the row as a {@link Map map}.
+     * @see #getRowMap(Object)
+     */
+    public @NotNull Object[] getRowMap(T primaryKey, @NotNull Object[] def) {
+        try {
+            return Objects.requireNonNull(getRowArray(primaryKey));
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
+    }
+
+    /**
      * Get the {@link ResultSet result} of getting a row based on the primary key.
      * @param primaryKey The primary key to get the row from.
      * @return The {@link ResultSet result} of the query.
@@ -246,6 +306,21 @@ public class SQLConnection<T> {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, primaryKey);
             return preparedStatement.executeQuery();
+        }
+    }
+
+    /**
+     * Get the {@link ResultSet result} of getting a row based on the primary key, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param primaryKey The primary key to get the row from.
+     * @return The {@link ResultSet result} of the query.
+     * @see #getRow(Object)
+     */
+    public ResultSet getRow(T primaryKey, ResultSet def) {
+        try {
+            return Objects.requireNonNull(getRow(primaryKey));
+        } catch (SQLException | NullPointerException e) {
+            return def;
         }
     }
 
@@ -262,6 +337,22 @@ public class SQLConnection<T> {
     }
 
     /**
+     * Get a specified column, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param primaryKey The primary key to get the value from.
+     * @param column The column/value's name.
+     * @return The {@link Object value} in the specified field.
+     * @see #get(Object, String)
+     */
+    public @NotNull Object get(T primaryKey, String column, Object def) {
+        try {
+            return Objects.requireNonNull(get(primaryKey, column));
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
+    }
+
+    /**
      * Get a specified column, based on the primary key and the column index.
      * @param primaryKey The primary key to get the value from.
      * @param column The column/value's index (starting at 1).
@@ -271,6 +362,22 @@ public class SQLConnection<T> {
     public Object get(T primaryKey, int column) throws SQLException {
         String sql = "SELECT " + (column + 1) + " FROM " + table + " WHERE " + primaryKeyName + " = ?";
         return executeQuery(sql, primaryKey);
+    }
+
+    /**
+     * Get a specified column, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param primaryKey The primary key to get the value from.
+     * @param column The column/value's index (starting at 1).
+     * @return The {@link Object value} in the specified field.
+     * @see #get(Object, int)
+     */
+    public @NotNull Object get(T primaryKey, int column, Object def) {
+        try {
+            return Objects.requireNonNull(get(primaryKey, column));
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
     }
 
     /**
@@ -371,6 +478,20 @@ public class SQLConnection<T> {
     }
 
     /**
+     * Get all rows of the table, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @return A {@link ArrayList list} containing all columns as an array.
+     * @see #getAllRowArrays()
+     */
+    public @NotNull List<Object[]> getAllRowArrays(List<Object[]> def) {
+        try {
+            return Objects.requireNonNull(getAllRowArrays());
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
+    }
+
+    /**
      * Get all rows of the table, where the {@link ArrayList list} represents the
      * rows and the {@link HashMap maps} are each row's columns with their name
      * first and then their value.
@@ -383,6 +504,20 @@ public class SQLConnection<T> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return extractRowsAsMaps(resultSet);
             }
+        }
+    }
+
+    /**
+     * Get all rows of the table, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @return A {@link HashMap map} containing all columns with their names and values.
+     * @see #getAllRowMaps()
+     */
+    public @NotNull List<Map<String, Object>> getAllRowMaps(List<Map<String, Object>> def) {
+        try {
+            return Objects.requireNonNull(getAllRowMaps());
+        } catch (SQLException | NullPointerException e) {
+            return def;
         }
     }
 
@@ -407,6 +542,22 @@ public class SQLConnection<T> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return extractRows(resultSet);
             }
+        }
+    }
+
+    /**
+     * Get all rows of the table containing something, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param object What object must be contained in at least one of the rows.
+     * @param checkedColumns All columns that are checked for the object.
+     * @return A {@link ArrayList list} containing all columns as an array.
+     * @see #getRowArraysContaining(Object, String...)
+     */
+    public @NotNull List<Object[]> getRowArraysContaining(List<Object[]> def, Object object, String... checkedColumns) {
+        try {
+            return Objects.requireNonNull(getRowArraysContaining(object, checkedColumns));
+        } catch (SQLException | NullPointerException e) {
+            return def;
         }
     }
 
@@ -436,6 +587,22 @@ public class SQLConnection<T> {
     }
 
     /**
+     * Get all rows of the table containing something, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param object What object must be contained in at least one of the rows.
+     * @param checkedColumns All columns that are checked for the object.
+     * @return A {@link HashMap map} containing all columns with their names and values.
+     * @see #getRowMapsContaining(Object, String...)
+     */
+    public @NotNull List<Map<String, Object>> getRowMapsContaining(List<Map<String, Object>> def, Object object, String... checkedColumns) {
+        try {
+            return Objects.requireNonNull(getRowMapsContaining(object, checkedColumns));
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
+    }
+
+    /**
      * Get all rows matching a specified WHERE predicate as a Collection of arrays,
      * where the {@link ArrayList list} represents the rows and the arrays are each
      * row's columns with their name first and then their value.
@@ -458,6 +625,23 @@ public class SQLConnection<T> {
     }
 
     /**
+     * Get all rows matching a predicate, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param wherePredicate The SQL {@code WHERE} predicate, like {@code column = ? AND another_column = ?}.
+     *                       This is inserted right after the {@code WHERE}.
+     * @param replacements What <b>objects</b> the question marks should be replaced with.
+     * @return All rows that match the WHERE predicate as arrays.
+     * @see #getRowArraysMatching(String, Object...)
+     */
+    public @NotNull Collection<Object[]> getRowArraysMatching(Collection<Object[]> def, String wherePredicate, Object @NotNull ... replacements) {
+        try {
+            return Objects.requireNonNull(getRowArraysMatching(wherePredicate, replacements));
+        } catch (SQLException | NullPointerException e) {
+            return def;
+        }
+    }
+
+    /**
      * Get all rows matching a specified WHERE predicate as a Collection of arrays,
      * where the {@link Collection collection} represents the rows and the arrays
      * are each row's columns with their name first and then their value.
@@ -476,6 +660,23 @@ public class SQLConnection<T> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return extractRowsAsMaps(resultSet);
             }
+        }
+    }
+
+    /**
+     * Get all rows matching a predicate, with a default value.
+     * @param def The default value if an error occurred or the result is {@code null}.
+     * @param wherePredicate The SQL {@code WHERE} predicate, like {@code column = ? AND another_column = ?}.
+     *                       This is inserted right after the {@code WHERE}.
+     * @param replacements What <b>objects</b> the question marks should be replaced with.
+     * @return All rows that match the WHERE predicate as arrays.
+     * @see #getRowMapsMatching(String, Object...)
+     */
+    public @NotNull Collection<Map<String, Object>> getRowMapsMatching(Collection<Map<String, Object>> def, String wherePredicate, Object @NotNull ... replacements) {
+        try {
+            return Objects.requireNonNull(getRowMapsMatching(wherePredicate, replacements));
+        } catch (SQLException | NullPointerException e) {
+            return def;
         }
     }
 
