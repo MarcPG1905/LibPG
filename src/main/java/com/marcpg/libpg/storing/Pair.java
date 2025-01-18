@@ -189,7 +189,7 @@ public class Pair<L, R> {
      */
     @Override
     public String toString() {
-        return "{\"left\":" + left.toString() + ",\"right\":" + right.toString() + "}";
+        return "{\"left\":" + left + ",\"right\":" + right + "}";
     }
 
     /**
