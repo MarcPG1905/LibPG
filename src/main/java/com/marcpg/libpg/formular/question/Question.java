@@ -1,9 +1,11 @@
 package com.marcpg.libpg.formular.question;
 
+import com.marcpg.libpg.color.Ansi;
 import com.marcpg.libpg.formular.CLIFormular;
 import com.marcpg.libpg.formular.Formular;
 import com.marcpg.libpg.formular.FormularResult;
 import com.marcpg.libpg.storing.Pair;
+import com.marcpg.libpg.text.Formatter;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -109,6 +111,15 @@ public abstract class Question {
 
     /** Renders the current question to {@link System#out}. Will only work for {@link CLIFormular}s. */
     public abstract void cliRender();
+
+    protected void title(@NotNull CLIFormular cliForm) {
+        cliForm.clearOutput();
+
+        System.out.println(Ansi.formattedString("-> " + title + " <-", cliForm.ansiTheme, Ansi.BOLD));
+        for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
+            System.out.println(Ansi.formattedString("|", cliForm.ansiTheme) + " " + line);
+        }
+    }
 
     /**
      * Represents an exception that's thrown by a question. <br>

@@ -3,7 +3,6 @@ package com.marcpg.libpg.formular.question;
 import com.marcpg.libpg.color.Ansi;
 import com.marcpg.libpg.formular.CLIFormular;
 import com.marcpg.libpg.formular.FormularResult;
-import com.marcpg.libpg.text.Formatter;
 import org.intellij.lang.annotations.Pattern;
 
 import java.io.IOException;
@@ -117,12 +116,7 @@ public class MultipleChoiceQuestion extends Question {
                     return;
                 }
 
-                cliForm.clearOutput();
-
-                System.out.println(Ansi.formattedString("-> " + title + " <-", cliForm.ansiTheme, Ansi.BOLD));
-                for (String line : Formatter.lineWrap(description, Math.max(50, title.length() * 2))) {
-                    System.out.println(Ansi.formattedString("|", cliForm.ansiTheme) + " " + line);
-                }
+                title(cliForm);
                 System.out.println(Ansi.gray("\n|| [W]: Up || [S]: Down || [ENTER]: Submit ||\n"));
 
                 for (String option : choices) {

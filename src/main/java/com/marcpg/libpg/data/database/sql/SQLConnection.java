@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * @since 0.0.6
  * @author MarcPG1905
  */
+@SuppressWarnings({ "SqlSourceToSinkFlow", "SqlNoDataSourceInspection" })
 public class SQLConnection<T> {
     /**
      * Represents a SQL-Database type, such as MySQL or PostgreSQL. <br>

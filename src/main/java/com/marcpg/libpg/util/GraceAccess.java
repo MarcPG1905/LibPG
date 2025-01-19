@@ -66,8 +66,8 @@ public class GraceAccess {
      * @see #check(Runnable, Runnable)
      */
     public State state() {
-        try {
-            return State.of(HttpClient.newHttpClient().send(HttpRequest.newBuilder(uri).GET().build(), HttpResponse.BodyHandlers.ofString()).body());
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            return State.of(client.send(HttpRequest.newBuilder(uri).GET().build(), HttpResponse.BodyHandlers.ofString()).body());
         } catch (Exception e) {
             return State.UNAVAILABLE;
         }
